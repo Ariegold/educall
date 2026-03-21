@@ -849,7 +849,9 @@ const STATE = {
   user: { name:'Admin User', email:'admin@school.ng', school:'Sunshine Secondary School', initials:'AD' },
   view: 'dashboard',
   kioskMode: 'in',
-  webhooks: { scan:'', absent:'', early:'' },
+  webhooks: { scan:'', absent:'', early:'', dbLoad:'', dbSaveStudent:'', dbSaveAttendance:'', dbGetReports:'' },
+  dbConnected: false,
+  dbLoading: false,
   editingStudent: null,
   selectedClass: 'SS2A',
   selectedSubject: 'Mathematics',
@@ -1311,6 +1313,7 @@ function manualMark(studentId, type) {
   if (student) {
     STATE.recentScans.unshift({ name:student.name, initials:student.name.split(' ').map(n=>n[0]).join('').slice(0,2), class:student.class, subject:STATE.selectedSubject, type, time:now });
     sendScanWebhook(student, type, now);
+    dbSaveAttendance(student.id, type, now);
   }
   renderBiometric();
   showToast(`${type==='in'?'Checked in':'Checked out'}: ${student?.name}`);
@@ -1460,10 +1463,11 @@ function saveStudent() {
   if (STATE.editingStudent) {
     const i = STATE.students.findIndex(s=>s.id===STATE.editingStudent);
     STATE.students[i] = { ...STATE.students[i], ...data };
-    showToast('Student updated');
+    dbSaveStudent(STATE.students[i]);
   } else {
-    STATE.students.push({ id:STATE.nextId++, ...data });
-    showToast('Student added');
+    const newStudent = { id:STATE.nextId++, ...data };
+    STATE.students.push(newStudent);
+    dbSaveStudent(newStudent);
   }
   closeModal('modal-student');
   renderStudents();
@@ -1652,17 +1656,39 @@ function renderSettings() {
         <div class="card mb-20">
           <div class="sh-title mb-4">n8n Webhook Configuration</div>
           <div style="font-size:12px;color:var(--outline);margin-bottom:16px;">Paste your n8n webhook URLs to activate parent alerts</div>
+          <div style="font-size:11px;font-weight:700;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;margin-top:4px;">Alert Webhooks</div>
           <div class="form-group">
             <label class="form-label">Scan Webhook (check-in/out)</label>
-            <input class="form-input" id="cfg-scan" placeholder="https://your.n8n.cloud/webhook/scan" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.scan}">
+            <input class="form-input" id="cfg-scan" placeholder="https://your.n8n.cloud/webhook/educall-scan" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.scan}">
           </div>
           <div class="form-group">
             <label class="form-label">Absence Alert Webhook</label>
-            <input class="form-input" id="cfg-absent" placeholder="https://your.n8n.cloud/webhook/absent" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.absent}">
+            <input class="form-input" id="cfg-absent" placeholder="https://your.n8n.cloud/webhook/educall-absent" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.absent}">
           </div>
           <div class="form-group">
             <label class="form-label">Early Checkout Webhook</label>
-            <input class="form-input" id="cfg-early" placeholder="https://your.n8n.cloud/webhook/early-checkout" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.early}">
+            <input class="form-input" id="cfg-early" placeholder="https://your.n8n.cloud/webhook/educall-early" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.early}">
+          </div>
+          <div style="font-size:11px;font-weight:700;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:0.05em;margin:16px 0 8px;">Database Webhooks (Neon)</div>
+          <div class="form-group">
+            <label class="form-label">Load Data Webhook</label>
+            <input class="form-input" id="cfg-dbload" placeholder="https://your.n8n.cloud/webhook/educall-db-load" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.dbLoad}">
+            <div style="font-size:11px;color:var(--outline);margin-top:4px;">Loads students, timetable, attendance on login</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Save Student Webhook</label>
+            <input class="form-input" id="cfg-dbstudent" placeholder="https://your.n8n.cloud/webhook/educall-db-student" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.dbSaveStudent}">
+            <div style="font-size:11px;color:var(--outline);margin-top:4px;">Saves new/updated student records to Neon</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Save Attendance Webhook</label>
+            <input class="form-input" id="cfg-dbatt" placeholder="https://your.n8n.cloud/webhook/educall-db-attendance" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.dbSaveAttendance}">
+            <div style="font-size:11px;color:var(--outline);margin-top:4px;">Saves each attendance record to Neon</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reports Webhook</label>
+            <input class="form-input" id="cfg-dbreports" placeholder="https://your.n8n.cloud/webhook/educall-db-reports" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.dbGetReports}">
+            <div style="font-size:11px;color:var(--outline);margin-top:4px;">Fetches historical attendance data for reports</div>
           </div>
           <div style="background:var(--surface-container-low);border-radius:10px;padding:14px;margin-bottom:16px;">
             <div style="font-size:11px;font-weight:700;color:var(--on-surface-variant);margin-bottom:8px;">n8n receives this on each scan:</div>
@@ -1703,7 +1729,17 @@ function saveWebhooksCfg() {
   STATE.webhooks.scan = document.getElementById('cfg-scan').value.trim();
   STATE.webhooks.absent = document.getElementById('cfg-absent').value.trim();
   STATE.webhooks.early = document.getElementById('cfg-early').value.trim();
+  STATE.webhooks.dbLoad = document.getElementById('cfg-dbload').value.trim();
+  STATE.webhooks.dbSaveStudent = document.getElementById('cfg-dbstudent').value.trim();
+  STATE.webhooks.dbSaveAttendance = document.getElementById('cfg-dbatt').value.trim();
+  STATE.webhooks.dbGetReports = document.getElementById('cfg-dbreports').value.trim();
+  // Persist to localStorage so settings survive page refresh
+  try {
+    localStorage.setItem('educall_webhooks', JSON.stringify(STATE.webhooks));
+  } catch(e) {}
   showToast('Webhook settings saved');
+  // Auto-connect to DB if load webhook is set
+  if (STATE.webhooks.dbLoad) setTimeout(dbLoadAll, 300);
 }
 async function testWebhook() {
   const url = STATE.webhooks.scan || document.getElementById('cfg-scan')?.value;
@@ -1878,13 +1914,164 @@ function showToast(msg, type='success') {
   t._timer = setTimeout(()=>t.classList.add('hidden'), 3500);
 }
 
+
+
+// ══════════════════════════════════════════════════
+//  DATABASE LAYER (via n8n → Neon PostgreSQL)
+// ══════════════════════════════════════════════════
+
+async function dbCall(webhook, payload) {
+  const url = STATE.webhooks[webhook];
+  if (!url) return null;
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch(e) {
+    console.warn('DB call failed:', webhook, e.message);
+    return null;
+  }
+}
+
+async function dbLoadAll() {
+  if (!STATE.webhooks.dbLoad) return false;
+  STATE.dbLoading = true;
+  showToast('Loading school data from database...');
+
+  const data = await dbCall('dbLoad', {
+    action: 'load_all',
+    school_id: STATE.user.school
+  });
+
+  if (!data) {
+    STATE.dbLoading = false;
+    showToast('Could not connect to database — using local data', 'error');
+    return false;
+  }
+
+  // Merge database data into STATE
+  if (data.students && data.students.length > 0) {
+    STATE.students = data.students.map(s => ({
+      id: s.id, name: s.full_name || s.name,
+      admno: s.admission_number || s.admno || '',
+      gender: s.gender || 'male',
+      class: s.class_name || s.class || 'SS2A',
+      parent: s.parent_name || s.parent || '',
+      phone: s.parent_phone || s.phone || '',
+      fp: s.fingerprint_enrolled || s.fp || false,
+    }));
+  }
+
+  if (data.timetable && data.timetable.length > 0) {
+    STATE.timetable = data.timetable.map(t => ({
+      id: t.id, subject: t.subject, class: t.class_name || t.class,
+      day: t.day, period: t.period, time: t.time || '', teacher: t.teacher || ''
+    }));
+  }
+
+  if (data.attendance) {
+    // Merge attendance records
+    Object.entries(data.attendance).forEach(([key, val]) => {
+      STATE.scans[key] = val;
+    });
+  }
+
+  if (data.alerts && data.alerts.length > 0) {
+    STATE.alerts = data.alerts;
+  }
+
+  STATE.dbConnected = true;
+  STATE.dbLoading = false;
+  showToast('Database connected — data loaded successfully');
+  return true;
+}
+
+async function dbSaveStudent(student) {
+  const result = await dbCall('dbSaveStudent', {
+    action: student.id ? 'update' : 'insert',
+    school_id: STATE.user.school,
+    student: {
+      id: student.id,
+      full_name: student.name,
+      admission_number: student.admno,
+      gender: student.gender,
+      class_name: student.class,
+      parent_name: student.parent,
+      parent_phone: student.phone,
+      fingerprint_enrolled: student.fp || false,
+    }
+  });
+
+  if (result && result.id) {
+    student.id = result.id; // Use DB-generated ID
+    showToast('Student saved to database');
+  }
+  return result;
+}
+
+async function dbSaveAttendance(studentId, type, time) {
+  await dbCall('dbSaveAttendance', {
+    action: 'upsert',
+    school_id: STATE.user.school,
+    record: {
+      student_id: studentId,
+      class_name: STATE.selectedClass,
+      subject: STATE.selectedSubject,
+      date: TODAY_STR,
+      type: type,
+      time: time,
+      is_late: STATE.scans[`${TODAY_STR}-${STATE.selectedClass}-${STATE.selectedSubject}-${studentId}`]?.is_late || false,
+    }
+  });
+}
+
+async function dbGetReports(filters = {}) {
+  return await dbCall('dbGetReports', {
+    action: 'get_reports',
+    school_id: STATE.user.school,
+    filters: {
+      date_from: filters.dateFrom || new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0],
+      date_to: filters.dateTo || TODAY_STR,
+      class_name: filters.class || null,
+      subject: filters.subject || null,
+    }
+  });
+}
+
+// Check DB connection status
+function getDbStatus() {
+  if (!STATE.webhooks.dbLoad) return { connected: false, reason: 'no-webhook' };
+  if (STATE.dbLoading) return { connected: false, reason: 'loading' };
+  if (STATE.dbConnected) return { connected: true };
+  return { connected: false, reason: 'not-loaded' };
+}
+
+function renderDbStatus() {
+  const { connected, reason } = getDbStatus();
+  if (connected) return `<span class="status-chip chip-in"><span class="material-symbols-outlined" style="font-size:12px;">database</span>Live database</span>`;
+  if (reason === 'loading') return `<span class="status-chip chip-late"><span class="material-symbols-outlined" style="font-size:12px;">sync</span>Connecting...</span>`;
+  if (reason === 'no-webhook') return `<span class="status-chip chip-absent"><span class="material-symbols-outlined" style="font-size:12px;">database</span>Not configured</span>`;
+  return `<span class="status-chip chip-absent" onclick="dbLoadAll()" style="cursor:pointer;"><span class="material-symbols-outlined" style="font-size:12px;">refresh</span>Reconnect DB</span>`;
+}
+
 document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
 
 // Live clock for dashboard
 setInterval(()=>{ const el=document.getElementById('live-clock'); if(el) el.textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }, 1000);
 
 // Init login page default role
-document.addEventListener('DOMContentLoaded', () => pickRole('admin'));
+document.addEventListener('DOMContentLoaded', () => {
+  pickRole('admin');
+  // Restore saved webhook settings
+  try {
+    const saved = localStorage.getItem('educall_webhooks');
+    if (saved) { STATE.webhooks = { ...STATE.webhooks, ...JSON.parse(saved) }; }
+  } catch(e) {}
+});
 </script>
 </body>
 </html>
