@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EduCall – Biometric Subject Attendance · SS1–SS3</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ─── DESIGN SYSTEM: Digital Registrar ─────────────────────── */
+:root {
+  --primary:              #003461;
+  --primary-container:    #004b87;
+  --on-primary:           #ffffff;
+  --on-primary-container: #8abcff;
+  --surface-tint:         #27609d;
+  --surface:              #f8f9ff;
+  --surface-bright:       #f8f9ff;
+  --surface-dim:          #d6dae3;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f0f4fd;
+  --surface-container:    #eaeef7;
+  --surface-container-high: #e4e8f1;
+  --surface-container-highest: #dee3eb;
+  --on-surface:           #171c22;
+  --on-surface-variant:   #424750;
+  --outline:              #727781;
+  --outline-variant:      #c2c6d1;
+  --secondary:            #1b6d24;
+  --secondary-container:  #a0f399;
+  --on-secondary-container: #217128;
+  --tertiary:             #6e0009;
+  --tertiary-container:   #990011;
+  --on-tertiary-container: #ffa098;
+  --error:                #ba1a1a;
+  --error-container:      #ffdad6;
+  --inverse-surface:      #2c3137;
+  --sig-grad: linear-gradient(135deg, #003461 0%, #004b87 100%);
+  --font-headline: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--on-surface);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-size: 20px; line-height: 1; display: inline-block; vertical-align: middle;
+}
+
+/* ─── PAGES ─────────────────────────────────────────────────── */
+.page { display: none; min-height: 100vh; }
+.page.active { display: flex; flex-direction: column; }
+
+/* ─── SIGNATURE GRADIENT ─────────────────────────────────────── */
+.sig-grad { background: var(--sig-grad); }
+
+/* ─── APP SHELL ──────────────────────────────────────────────── */
+.shell { display: flex; height: 100vh; overflow: hidden; }
+
+/* ─── SIDEBAR ────────────────────────────────────────────────── */
+.sidebar {
+  width: 256px; flex-shrink: 0;
+  background: var(--surface-container-low);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 28px 20px 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--sig-grad);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-mark svg { width: 20px; height: 20px; stroke: white; fill: none; stroke-width: 2; }
+.logo-text { font-family: var(--font-headline); font-weight: 800; font-size: 18px; color: var(--primary); letter-spacing: -0.02em; }
+.logo-sub { font-size: 11px; color: var(--outline); font-weight: 500; margin-top: 1px; }
+
+.nav-section { padding: 8px 12px 4px; font-size: 10px; font-weight: 700; color: var(--outline); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; border-radius: 8px; margin: 1px 8px;
+  color: var(--on-surface-variant); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; border: none; background: transparent;
+  width: calc(100% - 16px); text-align: left; position: relative;
+}
+.nav-item:hover { background: var(--surface-container); color: var(--on-surface); }
+.nav-item.active {
+  background: var(--surface-container-highest);
+  color: var(--primary);
+  font-weight: 600;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+  width: 4px; height: 24px; border-radius: 0 2px 2px 0;
+  background: var(--surface-tint);
+}
+.nav-item .material-symbols-outlined { font-size: 18px; }
+.nav-badge {
+  margin-left: auto; background: var(--primary); color: white;
+  font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px;
+  font-family: var(--font-body);
+}
+
+.sidebar-footer { margin-top: auto; padding: 16px 12px; }
+.user-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--surface-container); cursor: pointer;
+}
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--sig-grad); display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white; flex-shrink: 0;
+  font-family: var(--font-headline);
+}
+.user-info-name { font-size: 12px; font-weight: 600; color: var(--on-surface); }
+.user-info-role { font-size: 10px; color: var(--outline); text-transform: capitalize; }
+
+/* ─── MAIN AREA ──────────────────────────────────────────────── */
+.main { flex: 1; overflow-y: auto; background: var(--surface); }
+.topbar {
+  padding: 20px 32px 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.topbar-title { font-family: var(--font-headline); font-size: 26px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.02em; }
+.topbar-sub { font-size: 13px; color: var(--outline); margin-top: 2px; }
+.content { padding: 24px 32px 40px; }
+
+/* ─── CARDS ──────────────────────────────────────────────────── */
+.card {
+  background: var(--surface-container-lowest);
+  border-radius: 16px; padding: 24px;
+  /* Tonal layering — no border, use ambient shadow */
+  box-shadow: 0 12px 32px rgba(23,28,34,0.06);
+}
+.card-sm { background: var(--surface-container-lowest); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(23,28,34,0.05); }
+.card-surface { background: var(--surface-container-low); border-radius: 12px; padding: 16px; }
+
+/* ─── STAT CARDS ─────────────────────────────────────────────── */
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: var(--surface-container-lowest); border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(23,28,34,0.05); }
+.stat-number { font-family: var(--font-headline); font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin: 8px 0 4px; color: var(--on-surface); }
+.stat-label { font-size: 12px; color: var(--on-surface-variant); font-weight: 500; }
+.stat-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+.chip-green { background: var(--secondary-container); color: var(--on-secondary-container); }
+.chip-red { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+.chip-blue { background: #d3e4ff; color: #001c38; }
+.chip-amber { background: #fef3c7; color: #78350f; }
+.chip-outline { background: var(--surface-container); color: var(--on-surface-variant); }
+
+/* ─── SECTION HEADER ─────────────────────────────────────────── */
+.sh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.sh-title { font-family: var(--font-headline); font-size: 16px; font-weight: 700; color: var(--on-surface); }
+.sh-action { font-size: 12px; color: var(--surface-tint); font-weight: 600; cursor: pointer; }
+
+/* ─── BUTTONS ────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px; border-radius: 8px;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.15s;
+}
+.btn-primary { background: var(--sig-grad); color: white; box-shadow: 0 4px 14px rgba(0,52,97,0.22); }
+.btn-primary:hover { opacity: 0.92; transform: translateY(-1px); }
+.btn-secondary { background: var(--surface-container-high); color: var(--on-surface); }
+.btn-secondary:hover { background: var(--surface-container-highest); }
+.btn-success { background: var(--secondary-container); color: var(--on-secondary-container); }
+.btn-danger { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+.btn-sm { padding: 7px 14px; font-size: 12px; }
+.btn-full { width: 100%; }
+.btn-icon { padding: 8px; border-radius: 8px; }
+
+/* ─── FORMS ──────────────────────────────────────────────────── */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 11px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.form-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--surface-container-lowest);
+  border: none; border-radius: 8px; outline: none;
+  font-family: var(--font-body); font-size: 14px; color: var(--on-surface);
+  box-shadow: 0 0 0 1.5px var(--outline-variant);
+  transition: box-shadow 0.15s;
+}
+.form-input:focus { box-shadow: 0 0 0 2px var(--surface-tint); }
+.form-select {
+  width: 100%; padding: 10px 14px;
+  background: var(--surface-container-lowest);
+  border: none; border-radius: 8px; outline: none;
+  font-family: var(--font-body); font-size: 14px; color: var(--on-surface);
+  box-shadow: 0 0 0 1.5px var(--outline-variant);
+  cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23727781' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+}
+
+/* ─── BIOMETRIC SCAN UI ──────────────────────────────────────── */
+.scan-stage {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  padding: 48px 32px; position: relative;
+}
+.fingerprint-ring {
+  width: 160px; height: 160px; border-radius: 50%;
+  background: var(--surface-container-low);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; margin-bottom: 24px;
+  cursor: pointer;
+}
+.fingerprint-ring::before {
+  content: ''; position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(var(--surface-tint) 0%, transparent 0%);
+  padding: 3px; -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), white calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), white calc(100% - 3px));
+  transition: background 0.3s;
+}
+.fingerprint-ring.scanning::before {
+  background: conic-gradient(var(--surface-tint) 60%, transparent 60%);
+  animation: spin 1.2s linear infinite;
+}
+.fingerprint-ring.success::before {
+  background: conic-gradient(var(--secondary) 100%, transparent 100%);
+}
+.fingerprint-ring.error::before {
+  background: conic-gradient(var(--error) 100%, transparent 100%);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.fp-icon { font-size: 64px; color: var(--outline); transition: color 0.3s; }
+.fingerprint-ring.scanning .fp-icon { color: var(--surface-tint); }
+.fingerprint-ring.success .fp-icon { color: var(--secondary); }
+.fingerprint-ring.error .fp-icon { color: var(--error); }
+
+.scan-pulse {
+  position: absolute; inset: -8px; border-radius: 50%;
+  border: 2px solid var(--surface-tint); opacity: 0;
+}
+.scanning .scan-pulse { animation: pulse 1.5s ease-out infinite; }
+@keyframes pulse { 0%{opacity:0.6;transform:scale(1)} 100%{opacity:0;transform:scale(1.3)} }
+
+.scan-status { font-size: 18px; font-weight: 700; font-family: var(--font-headline); color: var(--on-surface); margin-bottom: 6px; }
+.scan-hint { font-size: 13px; color: var(--outline); }
+
+/* ─── STUDENT RESULT CARD ────────────────────────────────────── */
+.result-card {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+  border-radius: 16px; padding: 20px;
+  box-shadow: 0 12px 32px rgba(23,28,34,0.06);
+  display: flex; align-items: center; gap: 16px;
+  width: 100%; max-width: 420px; margin: 0 auto;
+  animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.result-avatar {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--sig-grad); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-headline); font-size: 18px; font-weight: 800; flex-shrink: 0;
+}
+.result-name { font-family: var(--font-headline); font-size: 16px; font-weight: 700; color: var(--on-surface); }
+.result-meta { font-size: 12px; color: var(--outline); margin-top: 2px; }
+.result-time { font-size: 22px; font-weight: 800; font-family: var(--font-headline); color: var(--primary); letter-spacing: -0.02em; }
+.result-time-label { font-size: 10px; color: var(--outline); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ─── STUDENT ROWS (no dividers rule) ───────────────────────── */
+.student-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px; margin-bottom: 4px;
+  transition: background 0.12s;
+}
+.student-row:nth-child(even) { background: var(--surface-container-low); }
+.student-row:hover { background: var(--surface-container); }
+.s-avatar {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant); display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; font-family: var(--font-headline);
+}
+.s-name { font-size: 13px; font-weight: 600; color: var(--on-surface); }
+.s-meta { font-size: 11px; color: var(--outline); margin-top: 1px; }
+.s-time { font-size: 12px; font-weight: 600; color: var(--on-surface-variant); font-family: var(--font-body); white-space: nowrap; }
+
+/* ─── STATUS CHIPS ───────────────────────────────────────────── */
+.status-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.chip-in { background: var(--secondary-container); color: var(--on-secondary-container); }
+.chip-out { background: #d3e4ff; color: #001c38; }
+.chip-absent { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+.chip-late { background: #fef3c7; color: #78350f; }
+.chip-pending { background: var(--surface-container-high); color: var(--on-surface-variant); }
+
+/* ─── SUBJECT TIMETABLE ──────────────────────────────────────── */
+.timetable-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 20px; }
+.period-card {
+  background: var(--surface-container-low);
+  border-radius: 10px; padding: 12px 10px;
+  cursor: pointer; transition: all 0.15s; text-align: center; position: relative;
+}
+.period-card:hover { background: var(--surface-container); }
+.period-card.active-period {
+  background: var(--sig-grad); color: white;
+  box-shadow: 0 4px 14px rgba(0,52,97,0.25);
+}
+.period-card.active-period .period-subject,
+.period-card.active-period .period-time,
+.period-card.active-period .period-class { color: white; opacity: 0.9; }
+.period-card.done { background: var(--secondary-container); }
+.period-card.done .period-subject { color: var(--on-secondary-container); }
+.period-subject { font-size: 12px; font-weight: 700; font-family: var(--font-headline); color: var(--on-surface); }
+.period-time { font-size: 10px; color: var(--outline); margin-top: 2px; }
+.period-class { font-size: 10px; font-weight: 600; color: var(--surface-tint); margin-top: 2px; }
+.period-dot { width: 6px; height: 6px; border-radius: 3px; background: var(--secondary); margin: 4px auto 0; }
+
+/* ─── PROGRESS BAR ───────────────────────────────────────────── */
+.prog-wrap { height: 4px; background: var(--surface-container-high); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+.prog-green { background: var(--secondary); }
+.prog-blue { background: var(--surface-tint); }
+.prog-red { background: var(--tertiary); }
+
+/* ─── TABLE ──────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; border-radius: 12px; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--surface-container-low); }
+th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 700; color: var(--outline); text-transform: uppercase; letter-spacing: 0.06em; }
+th:first-child { border-radius: 12px 0 0 0; }
+th:last-child { border-radius: 0 12px 0 0; }
+td { padding: 12px 14px; font-size: 13px; color: var(--on-surface); }
+tr:nth-child(even) td { background: var(--surface-container-low); }
+tr:hover td { background: var(--surface-container); }
+
+/* ─── MODAL ──────────────────────────────────────────────────── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(23,28,34,0.5); z-index: 100;
+  align-items: center; justify-content: center; padding: 20px;
+  backdrop-filter: blur(8px);
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--surface-container-lowest);
+  border-radius: 20px; padding: 32px;
+  width: 100%; max-width: 500px;
+  box-shadow: 0 32px 64px rgba(23,28,34,0.15);
+  animation: slideUp 0.25s ease-out;
+}
+.modal-title { font-family: var(--font-headline); font-size: 20px; font-weight: 800; color: var(--on-surface); margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--outline); margin-bottom: 24px; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+/* ─── GRID LAYOUTS ───────────────────────────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.ga { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 20px; }
+
+/* ─── TOAST ──────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--inverse-surface); color: #edf1fa;
+  padding: 14px 20px; border-radius: 12px; font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(23,28,34,0.2);
+  animation: slideUp 0.25s ease-out; max-width: 320px;
+  display: flex; align-items: center; gap: 10px;
+}
+.toast.hidden { display: none; }
+.toast.success { background: var(--secondary-container); color: var(--on-secondary-container); }
+.toast.error { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+
+/* ─── CLOCK ──────────────────────────────────────────────────── */
+.live-clock { font-family: var(--font-headline); font-size: 32px; font-weight: 800; color: var(--on-surface); letter-spacing: -0.03em; }
+.live-date { font-size: 12px; color: var(--outline); margin-top: 2px; }
+
+/* ─── CHECKIN KIOSK ──────────────────────────────────────────── */
+.kiosk-page { background: var(--sig-grad); min-height: 100vh; display: flex; flex-direction: column; }
+.kiosk-header { padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; }
+.kiosk-brand { font-family: var(--font-headline); font-size: 22px; font-weight: 800; color: rgba(255,255,255,0.9); letter-spacing: -0.02em; }
+.kiosk-period-badge { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 20px; padding: 8px 16px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9); }
+.kiosk-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px; }
+.kiosk-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 24px; padding: 48px 40px; text-align: center; width: 100%; max-width: 480px; }
+.kiosk-title { font-family: var(--font-headline); font-size: 28px; font-weight: 800; color: white; margin-bottom: 4px; letter-spacing: -0.02em; }
+.kiosk-sub { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 40px; }
+.fp-outer { position: relative; width: 180px; height: 180px; margin: 0 auto 32px; cursor: pointer; }
+.fp-bg { width: 100%; height: 100%; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.fp-bg:hover { background: rgba(255,255,255,0.14); }
+.fp-bg.scanning { background: rgba(255,255,255,0.12); }
+.fp-bg.success { background: rgba(160,243,153,0.2); }
+.fp-bg.error-state { background: rgba(255,160,152,0.2); }
+.fp-spinner {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.15);
+  border-top-color: rgba(255,255,255,0.8);
+  animation: spin 1s linear infinite; opacity: 0;
+}
+.fp-bg.scanning ~ .fp-spinner { opacity: 1; }
+.fp-icon-large { font-size: 80px; color: rgba(255,255,255,0.7); transition: color 0.3s; }
+.fp-bg.scanning .fp-icon-large { color: white; }
+.fp-bg.success .fp-icon-large { color: #a0f399; }
+.fp-bg.error-state .fp-icon-large { color: #ffa098; }
+
+.kiosk-status { font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 8px; font-family: var(--font-headline); }
+.kiosk-hint { font-size: 13px; color: rgba(255,255,255,0.5); }
+
+.kiosk-result {
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+  border-radius: 16px; padding: 20px 24px;
+  text-align: left; margin-top: 24px;
+  animation: slideUp 0.3s ease-out;
+  display: none;
+}
+.kiosk-result.visible { display: flex; align-items: center; gap: 16px; }
+.kiosk-result-avatar {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--sig-grad); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-headline); font-size: 16px; font-weight: 800; flex-shrink: 0;
+}
+.kiosk-result-name { font-size: 16px; font-weight: 700; color: var(--on-surface); font-family: var(--font-headline); }
+.kiosk-result-meta { font-size: 12px; color: var(--outline); margin-top: 2px; }
+.kiosk-result-time { font-size: 24px; font-weight: 800; font-family: var(--font-headline); color: var(--primary); letter-spacing: -0.02em; margin-left: auto; }
+
+.recent-scans { margin-top: 24px; text-align: left; }
+.recent-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.recent-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 10px;
+  background: rgba(255,255,255,0.07); margin-bottom: 4px;
+}
+.recent-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); flex: 1; }
+.recent-time { font-size: 11px; color: rgba(255,255,255,0.4); }
+.recent-type { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.recent-type.in { background: rgba(160,243,153,0.2); color: #a0f399; }
+.recent-type.out { background: rgba(163,201,255,0.2); color: #a3c9ff; }
+
+/* ─── REPORT BARS ────────────────────────────────────────────── */
+.rbar-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+.rbar-label { font-size: 12px; font-weight: 600; color: var(--on-surface-variant); width: 120px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rbar-wrap { flex: 1; height: 6px; background: var(--surface-container-high); border-radius: 3px; overflow: hidden; }
+.rbar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.rbar-pct { font-size: 12px; font-weight: 700; color: var(--on-surface); width: 40px; text-align: right; }
+
+/* ─── UTILITY ────────────────────────────────────────────────── */
+.flex { display: flex; }
+.flex-c { display: flex; align-items: center; }
+.flex-b { display: flex; align-items: center; justify-content: space-between; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.text-muted { color: var(--outline); }
+.text-sm { font-size: 12px; }
+.font-headline { font-family: var(--font-headline); }
+.fw-700 { font-weight: 700; }
+.fw-800 { font-weight: 800; }
+.fs-13 { font-size: 13px; }
+
+/* ─── KIOSK CLOCK ────────────────────────────────────────────── */
+.kiosk-clock { font-family: var(--font-headline); font-size: 48px; font-weight: 800; color: white; letter-spacing: -0.04em; line-height: 1; }
+.kiosk-date-line { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+/* mobile */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .g2{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr 1fr;}
+  .timetable-grid{grid-template-columns:repeat(3,1fr);}
+  .content{padding:16px;}
+  .topbar{padding:16px 16px 0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 1: LOGIN
+═══════════════════════════════════════════════════════════ -->
+<div id="pg-login" class="page active" style="background:var(--surface);align-items:center;justify-content:center;min-height:100vh;">
+  <div style="width:100%;max-width:420px;padding:24px;">
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:40px;">
+      <div style="width:56px;height:56px;border-radius:16px;background:var(--sig-grad);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div style="font-family:var(--font-headline);font-size:28px;font-weight:800;color:var(--primary);letter-spacing:-0.03em;">EduCall</div>
+      <div style="font-size:13px;color:var(--outline);margin-top:4px;">Biometric Subject Attendance · SS1–SS3</div>
+    </div>
+
+    <!-- Role tabs -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px;">
+      <div id="role-admin" class="role-tab-btn" onclick="pickRole('admin')"
+        style="padding:14px 8px;border-radius:12px;background:var(--primary);text-align:center;cursor:pointer;">
+        <div style="font-size:20px;margin-bottom:4px;">🏫</div>
+        <div style="font-size:11px;font-weight:700;color:white;">Admin</div>
+      </div>
+      <div id="role-teacher" class="role-tab-btn" onclick="pickRole('teacher')"
+        style="padding:14px 8px;border-radius:12px;background:var(--surface-container-low);text-align:center;cursor:pointer;">
+        <div style="font-size:20px;margin-bottom:4px;">👩‍🏫</div>
+        <div style="font-size:11px;font-weight:700;color:var(--on-surface-variant);">Teacher</div>
+      </div>
+      <div id="role-kiosk" class="role-tab-btn" onclick="pickRole('kiosk')"
+        style="padding:14px 8px;border-radius:12px;background:var(--surface-container-low);text-align:center;cursor:pointer;">
+        <div style="font-size:20px;margin-bottom:4px;">📲</div>
+        <div style="font-size:11px;font-weight:700;color:var(--on-surface-variant);">Kiosk</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-family:var(--font-headline);font-size:18px;font-weight:800;color:var(--on-surface);margin-bottom:4px;">Sign in</div>
+      <div style="font-size:13px;color:var(--outline);margin-bottom:20px;">Access your EduCall dashboard</div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="l-email" placeholder="you@school.edu.ng">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="l-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()" style="height:46px;font-size:14px;border-radius:10px;">
+        <span class="material-symbols-outlined" style="font-size:18px;">login</span>
+        Sign in to EduCall
+      </button>
+      <div style="margin-top:12px;text-align:center;font-size:11px;color:var(--outline);">
+        Demo: any email/password · role sets your view
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 2: BIOMETRIC KIOSK (tablet at classroom door)
+═══════════════════════════════════════════════════════════ -->
+<div id="pg-kiosk" class="page kiosk-page" style="display:none;flex-direction:column;">
+  <div class="kiosk-header">
+    <div class="kiosk-brand">EduCall</div>
+    <div id="kiosk-period-badge" class="kiosk-period-badge">
+      <span class="material-symbols-outlined" style="font-size:14px;">schedule</span>
+      Period 3 · Mathematics · SS2A
+    </div>
+    <div style="text-align:right;">
+      <div class="kiosk-clock" id="kiosk-clock">08:00</div>
+      <div class="kiosk-date-line" id="kiosk-date">Loading...</div>
+    </div>
+  </div>
+
+  <div class="kiosk-body">
+    <div style="width:100%;max-width:520px;">
+      <!-- Mode toggle -->
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:24px;">
+        <button id="mode-in-btn" class="btn" style="background:rgba(255,255,255,0.2);color:white;border-radius:20px;padding:8px 20px;font-size:12px;" onclick="setKioskMode('in')">
+          <span class="material-symbols-outlined" style="font-size:16px;">login</span> Check In
+        </button>
+        <button id="mode-out-btn" class="btn" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border-radius:20px;padding:8px 20px;font-size:12px;" onclick="setKioskMode('out')">
+          <span class="material-symbols-outlined" style="font-size:16px;">logout</span> Check Out
+        </button>
+      </div>
+
+      <div class="kiosk-card">
+        <div class="kiosk-title" id="kiosk-title">Place Finger to Check In</div>
+        <div class="kiosk-sub" id="kiosk-sub">Touch the fingerprint sensor below</div>
+
+        <div class="fp-outer" onclick="simulateScan()">
+          <div class="fp-bg" id="fp-bg">
+            <span class="material-symbols-outlined fp-icon-large" id="fp-icon" style="font-variation-settings:'FILL' 1,'wght' 300,'GRAD' 0,'opsz' 48;">fingerprint</span>
+          </div>
+          <div class="fp-spinner" id="fp-spinner"></div>
+        </div>
+
+        <div class="kiosk-status" id="kiosk-status">Ready to scan</div>
+        <div class="kiosk-hint" id="kiosk-hint">Tap the fingerprint icon to simulate a scan</div>
+
+        <div class="kiosk-result" id="kiosk-result">
+          <div class="kiosk-result-avatar" id="kr-avatar">AO</div>
+          <div>
+            <div class="kiosk-result-name" id="kr-name">Adaeze Okonkwo</div>
+            <div class="kiosk-result-meta" id="kr-meta">SS2A · Mathematics</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;">
+            <div class="kiosk-result-time" id="kr-time">08:14</div>
+            <div style="font-size:10px;color:var(--outline);text-transform:uppercase;letter-spacing:0.05em;" id="kr-type">Checked In</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent scans -->
+      <div class="recent-scans" id="recent-scans">
+        <div class="recent-title">Recent Scans</div>
+        <div id="recent-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back button -->
+  <div style="padding:16px 32px;">
+    <button class="btn" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);font-size:12px;" onclick="showPage('pg-app')">
+      <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span> Back to Dashboard
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 3: MAIN APP (Admin / Teacher)
+═══════════════════════════════════════════════════════════ -->
+<div id="pg-app" class="page" style="display:none;">
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">EduCall</div>
+        <div class="logo-sub" id="sb-school">Sunshine Secondary</div>
+      </div>
+    </div>
+
+    <nav id="sidebar-nav" style="padding:8px 0;flex:1;"></nav>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="sb-avatar">AD</div>
+        <div>
+          <div class="user-info-name" id="sb-name">Admin</div>
+          <div class="user-info-role" id="sb-role">admin</div>
+        </div>
+        <button onclick="doLogout()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--outline);display:flex;" title="Sign out">
+          <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main" id="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-sub" id="topbar-sub"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;" id="topbar-actions"></div>
+    </div>
+    <div class="content" id="content" style="animation:slideUp 0.3s ease-out;"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ MODALS ══════════════ -->
+<div class="modal-bg" id="modal-student">
+  <div class="modal">
+    <div class="modal-title" id="sm-title">Add Student</div>
+    <div class="modal-sub">Fill in the student's details</div>
+    <div class="g2">
+      <div class="form-group" style="grid-column:1/-1;">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="sm-name" placeholder="e.g. Chukwuemeka Okafor">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Admission No.</label>
+        <input class="form-input" id="sm-admno" placeholder="SCH/2024/001">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Gender</label>
+        <select class="form-select" id="sm-gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Class</label>
+        <select class="form-select" id="sm-class">
+          <optgroup label="SS1">
+            <option>SS1A</option><option>SS1B</option><option>SS1C</option>
+          </optgroup>
+          <optgroup label="SS2">
+            <option>SS2A</option><option>SS2B</option><option>SS2C</option>
+          </optgroup>
+          <optgroup label="SS3">
+            <option>SS3A</option><option>SS3B</option><option>SS3C</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parent / Guardian</label>
+        <input class="form-input" id="sm-parent" placeholder="Parent full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parent WhatsApp</label>
+        <input class="form-input" id="sm-phone" placeholder="+234 800 000 0000">
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label class="form-label">Fingerprint Status</label>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface-container-low);border-radius:8px;">
+          <span class="material-symbols-outlined" style="font-size:24px;color:var(--outline);">fingerprint</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--on-surface);" id="sm-fp-status">Not enrolled</div>
+            <div style="font-size:11px;color:var(--outline);">Fingerprint will be enrolled on device</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" style="margin-left:auto;" onclick="simulateEnroll()">Enroll</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-student')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-subject">
+  <div class="modal">
+    <div class="modal-title">Add Subject / Period</div>
+    <div class="modal-sub">Configure a subject period for a class</div>
+    <div class="g2">
+      <div class="form-group">
+        <label class="form-label">Subject</label>
+        <select class="form-select" id="sub-name">
+          <option>Mathematics</option><option>English Language</option>
+          <option>Physics</option><option>Chemistry</option>
+          <option>Biology</option><option>Economics</option>
+          <option>Government</option><option>Literature</option>
+          <option>Further Mathematics</option><option>Agricultural Science</option>
+          <option>Geography</option><option>Commerce</option>
+          <option>Civic Education</option><option>Computer Science</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Class</label>
+        <select class="form-select" id="sub-class">
+          <optgroup label="SS1"><option>SS1A</option><option>SS1B</option><option>SS1C</option></optgroup>
+          <optgroup label="SS2"><option>SS2A</option><option>SS2B</option><option>SS2C</option></optgroup>
+          <optgroup label="SS3"><option>SS3A</option><option>SS3B</option><option>SS3C</option></optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Day</label>
+        <select class="form-select" id="sub-day">
+          <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+          <option>Thursday</option><option>Friday</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Period</label>
+        <select class="form-select" id="sub-period">
+          <option>Period 1 (7:30–8:30)</option>
+          <option>Period 2 (8:30–9:30)</option>
+          <option>Period 3 (9:30–10:30)</option>
+          <option>Period 4 (10:45–11:45)</option>
+          <option>Period 5 (11:45–12:45)</option>
+          <option>Period 6 (13:30–14:30)</option>
+          <option>Period 7 (14:30–15:30)</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label class="form-label">Teacher</label>
+        <select class="form-select" id="sub-teacher">
+          <option>Mr Adeyemi</option><option>Mrs Okonkwo</option>
+          <option>Mr Nwosu</option><option>Mrs Aliyu</option>
+          <option>Mr Bakare</option><option>Mrs Eze</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-subject')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSubject()">Add Period</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-webhook">
+  <div class="modal">
+    <div class="modal-title">n8n Webhook Settings</div>
+    <div class="modal-sub">Connect attendance events to your n8n automation</div>
+    <div class="form-group">
+      <label class="form-label">Check-In / Check-Out Webhook</label>
+      <input class="form-input" id="wh-scan" placeholder="https://your.n8n.cloud/webhook/scan" style="font-size:12px;font-family:monospace;">
+      <div class="text-sm text-muted mt-8">Fired on every fingerprint scan. Sends student, subject, class, time, type (in/out).</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Absence Alert Webhook</label>
+      <input class="form-input" id="wh-absent" placeholder="https://your.n8n.cloud/webhook/absent" style="font-size:12px;font-family:monospace;">
+      <div class="text-sm text-muted mt-8">Fired when class ends and student never checked in. Alerts parent via WhatsApp/SMS.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Early Checkout Webhook</label>
+      <input class="form-input" id="wh-early" placeholder="https://your.n8n.cloud/webhook/early-checkout" style="font-size:12px;font-family:monospace;">
+      <div class="text-sm text-muted mt-8">Fired when student checks out before class ends. Parent notified immediately.</div>
+    </div>
+    <div style="background:var(--surface-container-low);border-radius:10px;padding:14px;margin-bottom:4px;">
+      <div style="font-size:11px;font-weight:700;color:var(--on-surface-variant);margin-bottom:8px;">Payload sent to n8n on each scan:</div>
+      <pre style="font-size:10px;color:var(--on-surface-variant);line-height:1.7;overflow-x:auto;">{
+  "event": "student_checked_in",
+  "student": { "name": "Adaeze Okonkwo", "admno": "SCH/001", "class": "SS2A" },
+  "subject": "Mathematics",
+  "period": "Period 3 (9:30–10:30)",
+  "timestamp": "2025-03-21T09:34:12",
+  "type": "check_in",
+  "parent_phone": "+234 803 111 2222"
+}</pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-webhook')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveWebhooks()">Save Webhooks</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════════
+const CLASSES = ['SS1A','SS1B','SS1C','SS2A','SS2B','SS2C','SS3A','SS3B','SS3C'];
+const SUBJECTS = ['Mathematics','English Language','Physics','Chemistry','Biology','Economics','Government','Literature','Computer Science','Civic Education'];
+const PERIODS = [
+  {id:1,label:'Period 1',time:'7:30–8:30'},
+  {id:2,label:'Period 2',time:'8:30–9:30'},
+  {id:3,label:'Period 3',time:'9:30–10:30'},
+  {id:4,label:'Period 4',time:'10:45–11:45'},
+  {id:5,label:'Period 5',time:'11:45–12:45'},
+  {id:6,label:'Period 6',time:'13:30–14:30'},
+  {id:7,label:'Period 7',time:'14:30–15:30'},
+];
+
+const STATE = {
+  role: 'admin',
+  user: { name:'Admin User', email:'admin@school.ng', school:'Sunshine Secondary School', initials:'AD' },
+  view: 'dashboard',
+  kioskMode: 'in',
+  webhooks: { scan:'', absent:'', early:'' },
+  editingStudent: null,
+  selectedClass: 'SS2A',
+  selectedSubject: 'Mathematics',
+  selectedPeriod: 3,
+
+  students: [
+    {id:1,name:'Adaeze Okonkwo',admno:'SCH/24/001',gender:'female',class:'SS2A',parent:'Mrs Okonkwo',phone:'+234 803 111 2222',fp:true},
+    {id:2,name:'Chukwuemeka Eze',admno:'SCH/24/002',gender:'male',class:'SS2A',parent:'Mr Eze',phone:'+234 806 333 4444',fp:true},
+    {id:3,name:'Fatima Aliyu',admno:'SCH/24/003',gender:'female',class:'SS1A',parent:'Alhaji Aliyu',phone:'+234 807 555 6666',fp:true},
+    {id:4,name:'Babatunde Adeyemi',admno:'SCH/24/004',gender:'male',class:'SS2A',parent:'Mr Adeyemi',phone:'+234 809 777 8888',fp:false},
+    {id:5,name:'Ngozi Obi',admno:'SCH/24/005',gender:'female',class:'SS3A',parent:'Mrs Obi',phone:'+234 802 999 0000',fp:true},
+    {id:6,name:'Emeka Nwosu',admno:'SCH/24/006',gender:'male',class:'SS1B',parent:'Mr Nwosu',phone:'+234 808 123 4567',fp:true},
+    {id:7,name:'Blessing Udoh',admno:'SCH/24/007',gender:'female',class:'SS2B',parent:'Mrs Udoh',phone:'+234 803 234 5678',fp:true},
+    {id:8,name:'Tunde Bakare',admno:'SCH/24/008',gender:'male',class:'SS3A',parent:'Mr Bakare',phone:'+234 805 345 6789',fp:true},
+    {id:9,name:'Chiamaka Osei',admno:'SCH/24/009',gender:'female',class:'SS2A',parent:'Mrs Osei',phone:'+234 811 456 7890',fp:true},
+    {id:10,name:'Ibrahim Hassan',admno:'SCH/24/010',gender:'male',class:'SS1C',parent:'Mr Hassan',phone:'+234 812 567 8901',fp:false},
+    {id:11,name:'Aisha Mohammed',admno:'SCH/24/011',gender:'female',class:'SS3B',parent:'Mrs Mohammed',phone:'+234 813 678 9012',fp:true},
+    {id:12,name:'Oluwafemi Adeleke',admno:'SCH/24/012',gender:'male',class:'SS2A',parent:'Mr Adeleke',phone:'+234 814 789 0123',fp:true},
+  ],
+  nextId: 13,
+
+  timetable: [
+    {id:1,subject:'Mathematics',class:'SS2A',day:'Monday',period:'Period 3',time:'9:30–10:30',teacher:'Mr Adeyemi'},
+    {id:2,subject:'English Language',class:'SS2A',day:'Monday',period:'Period 1',time:'7:30–8:30',teacher:'Mrs Okonkwo'},
+    {id:3,subject:'Physics',class:'SS1A',day:'Monday',period:'Period 2',time:'8:30–9:30',teacher:'Mr Nwosu'},
+    {id:4,subject:'Chemistry',class:'SS3A',day:'Tuesday',period:'Period 4',time:'10:45–11:45',teacher:'Mrs Aliyu'},
+    {id:5,subject:'Biology',class:'SS2B',day:'Wednesday',period:'Period 3',time:'9:30–10:30',teacher:'Mr Bakare'},
+    {id:6,subject:'Economics',class:'SS3B',day:'Thursday',period:'Period 5',time:'11:45–12:45',teacher:'Mrs Eze'},
+    {id:7,subject:'Government',class:'SS1B',day:'Friday',period:'Period 2',time:'8:30–9:30',teacher:'Mr Adeyemi'},
+    {id:8,subject:'Literature',class:'SS1C',day:'Monday',period:'Period 4',time:'10:45–11:45',teacher:'Mrs Okonkwo'},
+    {id:9,subject:'Computer Science',class:'SS2C',day:'Tuesday',period:'Period 1',time:'7:30–8:30',teacher:'Mr Nwosu'},
+  ],
+  nextTTId: 10,
+
+  // scans: { 'date-subjectId-studentId': { in: time, out: time } }
+  scans: {},
+  recentScans: [],
+  alerts: [
+    {id:1,student:'Babatunde Adeyemi',class:'SS2A',subject:'Mathematics',type:'absent',date:'2025-03-20',parent:'Mr Adeyemi',status:'sent'},
+    {id:2,student:'Ibrahim Hassan',class:'SS1C',subject:'English Language',type:'absent',date:'2025-03-20',parent:'Mr Hassan',status:'sent'},
+    {id:3,student:'Adaeze Okonkwo',class:'SS2A',subject:'Physics',type:'late',date:'2025-03-21',parent:'Mrs Okonkwo',status:'pending'},
+  ],
+};
+
+const TODAY_STR = new Date().toISOString().split('T')[0];
+const TODAY_DISPLAY = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+// ══════════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════════
+function pickRole(role) {
+  STATE.role = role;
+  document.querySelectorAll('.role-tab-btn').forEach(b => {
+    b.style.background = 'var(--surface-container-low)';
+    b.querySelector('div:last-child').style.color = 'var(--on-surface-variant)';
+  });
+  const el = document.getElementById('role-'+role);
+  el.style.background = 'var(--primary)';
+  el.querySelector('div:last-child').style.color = 'white';
+}
+
+function doLogin() {
+  const email = document.getElementById('l-email').value || 'demo@school.ng';
+  const name = email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  STATE.user = {
+    name, email, school: 'Sunshine Secondary School, Lagos',
+    initials: name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()
+  };
+
+  if (STATE.role === 'kiosk') {
+    showPage('pg-kiosk');
+    startKioskClock();
+  } else {
+    showPage('pg-app');
+    initApp();
+  }
+}
+
+function doLogout() { showPage('pg-login'); }
+
+// ══════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════
+const NAV_ADMIN = [
+  {id:'dashboard',icon:'dashboard',label:'Dashboard'},
+  {id:'timetable',icon:'calendar_month',label:'Subject Timetable'},
+  {id:'biometric',icon:'fingerprint',label:'Biometric Attendance'},
+  {id:'students',icon:'groups',label:'Students',badge:()=>STATE.students.length},
+  {id:'reports',icon:'bar_chart',label:'Reports & Analytics'},
+  {id:'alerts',icon:'notifications',label:'Parent Alerts',badge:()=>STATE.alerts.filter(a=>a.status==='pending').length||null},
+  {id:'settings',icon:'settings',label:'Settings'},
+];
+
+const NAV_TEACHER = [
+  {id:'dashboard',icon:'dashboard',label:'Dashboard'},
+  {id:'biometric',icon:'fingerprint',label:'Class Attendance'},
+  {id:'timetable',icon:'calendar_month',label:'My Timetable'},
+  {id:'reports',icon:'bar_chart',label:'Reports'},
+];
+
+function initApp() {
+  document.getElementById('sb-name').textContent = STATE.user.name;
+  document.getElementById('sb-role').textContent = STATE.role;
+  document.getElementById('sb-school').textContent = STATE.user.school.split(',')[0];
+  document.getElementById('sb-avatar').textContent = STATE.user.initials;
+  renderNav();
+  navTo('dashboard');
+}
+
+function renderNav() {
+  const items = STATE.role === 'admin' ? NAV_ADMIN : NAV_TEACHER;
+  document.getElementById('sidebar-nav').innerHTML = items.map(item => {
+    const badge = item.badge ? item.badge() : null;
+    return `<button class="nav-item" id="nav-${item.id}" onclick="navTo('${item.id}')">
+      <span class="material-symbols-outlined">${item.icon}</span>
+      <span style="flex:1;">${item.label}</span>
+      ${badge ? `<span class="nav-badge">${badge}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+
+function navTo(view) {
+  STATE.view = view;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const el = document.getElementById('nav-'+view);
+  if (el) el.classList.add('active');
+  const map = {
+    dashboard: renderDashboard,
+    timetable: renderTimetable,
+    biometric: renderBiometric,
+    students: renderStudents,
+    reports: renderReports,
+    alerts: renderAlerts,
+    settings: renderSettings,
+  };
+  if (map[view]) map[view]();
+  document.getElementById('main').scrollTop = 0;
+}
+
+function setHeader(title, sub='', actions='') {
+  document.getElementById('topbar-title').textContent = title;
+  document.getElementById('topbar-sub').textContent = sub;
+  document.getElementById('topbar-actions').innerHTML = actions;
+}
+
+function setContent(html) {
+  const c = document.getElementById('content');
+  c.innerHTML = html;
+  c.style.animation = 'none'; void c.offsetWidth; c.style.animation = 'slideUp 0.3s ease-out';
+}
+
+// ══════════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════════
+function renderDashboard() {
+  setHeader('Dashboard', TODAY_DISPLAY);
+  setContent(`
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-chip chip-blue"><span class="material-symbols-outlined" style="font-size:12px;">groups</span> Students</span>
+        <div class="stat-number">${STATE.students.length}</div>
+        <div class="stat-label">Total enrolled (SS1–SS3)</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-chip chip-green"><span class="material-symbols-outlined" style="font-size:12px;">fingerprint</span> Biometric</span>
+        <div class="stat-number">${STATE.students.filter(s=>s.fp).length}</div>
+        <div class="stat-label">Fingerprints enrolled</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-chip chip-outline"><span class="material-symbols-outlined" style="font-size:12px;">calendar_month</span> Periods</span>
+        <div class="stat-number">${STATE.timetable.length}</div>
+        <div class="stat-label">Subject periods configured</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-chip chip-red"><span class="material-symbols-outlined" style="font-size:12px;">notifications</span> Alerts</span>
+        <div class="stat-number">${STATE.alerts.filter(a=>a.status==='pending').length}</div>
+        <div class="stat-label">Pending parent alerts</div>
+      </div>
+    </div>
+
+    <div class="g2 mb-24">
+      <div class="card">
+        <div class="sh">
+          <div class="sh-title">Today's Subject Sessions</div>
+          <span class="sh-action" onclick="navTo('biometric')">Mark attendance →</span>
+        </div>
+        ${renderTodaySessions()}
+      </div>
+      <div class="card">
+        <div class="sh">
+          <div class="sh-title">Attendance by Class</div>
+          <span class="sh-action" onclick="navTo('reports')">Full report →</span>
+        </div>
+        ${CLASSES.map(cls => {
+          const rate = 70 + Math.floor(Math.random()*28);
+          return `<div class="rbar-row">
+            <div class="rbar-label">${cls}</div>
+            <div class="rbar-wrap"><div class="rbar-fill" style="width:${rate}%;background:${rate>=85?'var(--secondary)':rate>=70?'#f59e0b':'var(--tertiary)'}"></div></div>
+            <div class="rbar-pct">${rate}%</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sh">
+        <div class="sh-title">Recent Biometric Scans</div>
+        <button class="btn btn-secondary btn-sm" onclick="showPage('pg-kiosk');startKioskClock();">
+          <span class="material-symbols-outlined" style="font-size:15px;">fingerprint</span> Open Kiosk
+        </button>
+      </div>
+      ${renderRecentScansMini()}
+    </div>
+  `);
+}
+
+function renderTodaySessions() {
+  const today = new Date().toLocaleDateString('en-US',{weekday:'long'});
+  const todaySlots = STATE.timetable.filter(t=>t.day===today).slice(0,5);
+  if (!todaySlots.length) return `<div style="text-align:center;padding:24px;color:var(--outline);font-size:13px;">No sessions scheduled for today</div>`;
+  return todaySlots.map(s => {
+    const classStudents = STATE.students.filter(st=>st.class===s.class);
+    const present = Math.floor(classStudents.length * 0.8);
+    const rate = classStudents.length > 0 ? Math.round((present/classStudents.length)*100) : 0;
+    return `<div class="student-row">
+      <div class="s-avatar"><span class="material-symbols-outlined" style="font-size:16px;">menu_book</span></div>
+      <div style="flex:1;">
+        <div class="s-name">${s.subject}</div>
+        <div class="s-meta">${s.class} · ${s.period} · ${s.time}</div>
+      </div>
+      <div style="width:80px;margin-right:8px;">
+        <div class="prog-wrap"><div class="prog-fill prog-green" style="width:${rate}%"></div></div>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:${rate>=80?'var(--secondary)':'var(--tertiary)'};">${rate}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderRecentScansMini() {
+  if (!STATE.recentScans.length) {
+    return `<div style="text-align:center;padding:32px;color:var(--outline);">
+      <span class="material-symbols-outlined" style="font-size:40px;opacity:0.3;">fingerprint</span>
+      <div style="font-size:13px;margin-top:8px;">No scans today. Open the kiosk to begin.</div>
+    </div>`;
+  }
+  return STATE.recentScans.slice(0,8).map(s=>`
+    <div class="student-row">
+      <div class="s-avatar">${s.initials}</div>
+      <div style="flex:1;">
+        <div class="s-name">${s.name}</div>
+        <div class="s-meta">${s.class} · ${s.subject}</div>
+      </div>
+      <span class="status-chip ${s.type==='in'?'chip-in':'chip-out'}">${s.type==='in'?'Checked In':'Checked Out'}</span>
+      <span class="s-time" style="margin-left:8px;">${s.time}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+//  TIMETABLE
+// ══════════════════════════════════════════════════════════
+function renderTimetable() {
+  setHeader('Subject Timetable', 'SS1–SS3 weekly schedule',
+    `<button class="btn btn-primary btn-sm" onclick="openModal('modal-subject')">
+      <span class="material-symbols-outlined" style="font-size:15px;">add</span> Add Period
+    </button>`);
+
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  setContent(`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+      ${CLASSES.map(c=>`<button onclick="filterTT('${c}')" style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:var(--surface-container-low);color:var(--on-surface-variant);" class="tt-cls-btn" id="ttb-${c}">${c}</button>`).join('')}
+      <button onclick="filterTT('')" style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:var(--primary);color:white;">All</button>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Subject</th><th>Class</th><th>Day</th><th>Period</th><th>Time</th><th>Teacher</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="tt-tbody">${renderTTRows(STATE.timetable)}</tbody>
+        </table>
+      </div>
+    </div>
+  `);
+}
+
+function renderTTRows(items) {
+  if (!items.length) return `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--outline);">No periods configured</td></tr>`;
+  return items.map(t=>`<tr>
+    <td style="font-weight:600;">${t.subject}</td>
+    <td><span class="status-chip chip-blue">${t.class}</span></td>
+    <td>${t.day}</td>
+    <td>${t.period}</td>
+    <td style="font-size:12px;color:var(--outline);font-family:monospace;">${t.time}</td>
+    <td>${t.teacher}</td>
+    <td>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTT(${t.id})" title="Delete">
+        <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+      </button>
+    </td>
+  </tr>`).join('');
+}
+
+function filterTT(cls) {
+  const items = cls ? STATE.timetable.filter(t=>t.class===cls) : STATE.timetable;
+  document.getElementById('tt-tbody').innerHTML = renderTTRows(items);
+}
+
+function saveSubject() {
+  const sub = {
+    id: STATE.nextTTId++,
+    subject: document.getElementById('sub-name').value,
+    class: document.getElementById('sub-class').value,
+    day: document.getElementById('sub-day').value,
+    period: document.getElementById('sub-period').value.split(' (')[0],
+    time: document.getElementById('sub-period').value.match(/\(([^)]+)\)/)?.[1] || '',
+    teacher: document.getElementById('sub-teacher').value,
+  };
+  STATE.timetable.push(sub);
+  closeModal('modal-subject');
+  renderTimetable();
+  showToast('Period added to timetable');
+}
+
+function deleteTT(id) {
+  STATE.timetable = STATE.timetable.filter(t=>t.id!==id);
+  renderTimetable();
+  showToast('Period removed');
+}
+
+// ══════════════════════════════════════════════════════════
+//  BIOMETRIC ATTENDANCE (per subject view)
+// ══════════════════════════════════════════════════════════
+function renderBiometric() {
+  setHeader('Biometric Attendance', 'Per-subject check-in & check-out');
+
+  const classStudents = STATE.students.filter(s=>s.class===STATE.selectedClass);
+  const subjectPeriods = STATE.timetable.filter(t=>t.class===STATE.selectedClass);
+  const todayKey = `${TODAY_STR}-${STATE.selectedClass}-${STATE.selectedSubject}`;
+
+  // Compute attendance for selected subject
+  const attendanceMap = {};
+  classStudents.forEach(s => {
+    const key = `${todayKey}-${s.id}`;
+    attendanceMap[s.id] = STATE.scans[key] || null;
+  });
+
+  const checkedIn = Object.values(attendanceMap).filter(v=>v&&v.in).length;
+  const checkedOut = Object.values(attendanceMap).filter(v=>v&&v.out).length;
+  const absent = classStudents.length - checkedIn;
+  const rate = classStudents.length > 0 ? Math.round((checkedIn/classStudents.length)*100) : 0;
+
+  setContent(`
+    <div class="g2 mb-20">
+      <!-- Controls -->
+      <div class="card">
+        <div class="sh-title mb-16">Select Class & Subject</div>
+        <div class="form-group">
+          <label class="form-label">Class</label>
+          <select class="form-select" onchange="STATE.selectedClass=this.value;renderBiometric();">
+            ${CLASSES.map(c=>`<option ${c===STATE.selectedClass?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <select class="form-select" onchange="STATE.selectedSubject=this.value;renderBiometric();">
+            ${SUBJECTS.map(s=>`<option ${s===STATE.selectedSubject?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${subjectPeriods.slice(0,4).map(p=>`
+            <div style="flex:1;min-width:120px;padding:10px;border-radius:10px;background:${p.subject===STATE.selectedSubject?'var(--sig-grad)':'var(--surface-container-low)'};text-align:center;cursor:pointer;" onclick="STATE.selectedSubject='${p.subject}';renderBiometric();">
+              <div style="font-size:11px;font-weight:700;color:${p.subject===STATE.selectedSubject?'white':'var(--on-surface)'};">${p.subject}</div>
+              <div style="font-size:10px;color:${p.subject===STATE.selectedSubject?'rgba(255,255,255,0.7)':'var(--outline)'};">${p.period}</div>
+            </div>`).join('')}
+        </div>
+        <div class="mt-16">
+          <button class="btn btn-primary btn-full" onclick="showPage('pg-kiosk');startKioskClock();updateKioskPeriod();">
+            <span class="material-symbols-outlined" style="font-size:16px;">fingerprint</span>
+            Open Biometric Kiosk
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div>
+        <div class="g2 mb-16" style="gap:12px;">
+          ${[
+            ['Checked In',checkedIn,'chip-green','login'],
+            ['Checked Out',checkedOut,'chip-out','logout'],
+            ['Absent',absent,'chip-red','person_off'],
+            ['Rate',rate+'%','chip-blue','bar_chart'],
+          ].map(([l,v,c,ico])=>`
+            <div class="stat-card" style="padding:16px;">
+              <span class="stat-chip ${c}" style="margin-bottom:6px;"><span class="material-symbols-outlined" style="font-size:12px;">${ico}</span>${l}</span>
+              <div class="stat-number" style="font-size:2rem;">${v}</div>
+            </div>`).join('')}
+        </div>
+        <!-- Progress -->
+        <div class="card-surface">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:600;color:var(--on-surface-variant);">Attendance rate</span>
+            <span style="font-size:12px;font-weight:700;color:${rate>=80?'var(--secondary)':rate>=60?'#d97706':'var(--tertiary)'};">${rate}%</span>
+          </div>
+          <div class="prog-wrap" style="height:8px;border-radius:4px;">
+            <div class="prog-fill" style="width:${rate}%;background:${rate>=80?'var(--secondary)':rate>=60?'#f59e0b':'var(--tertiary)'}; border-radius:4px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student attendance table -->
+    <div class="card">
+      <div class="sh">
+        <div class="sh-title">${STATE.selectedClass} · ${STATE.selectedSubject} — Today's Attendance</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="markAllManual('in')">Mark All In</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportAttendanceCSV()">
+            <span class="material-symbols-outlined" style="font-size:14px;">download</span> CSV
+          </button>
+        </div>
+      </div>
+
+      <div id="att-list">
+        ${classStudents.map((s,i)=>{
+          const rec = attendanceMap[s.id];
+          const inTime = rec?.in || null;
+          const outTime = rec?.out || null;
+          const statusChip = !inTime ? `<span class="status-chip chip-absent">Absent</span>`
+            : !outTime ? `<span class="status-chip chip-in">In — ${inTime}</span>`
+            : `<span class="status-chip chip-out">Out — ${outTime}</span>`;
+          return `<div class="student-row" id="att-row-${s.id}">
+            <span style="font-size:11px;color:var(--outline);width:20px;flex-shrink:0;">${i+1}</span>
+            <div class="s-avatar" style="${s.fp?'background:var(--surface-container-high);color:var(--on-surface-variant);':'background:var(--error-container);color:var(--error);'}">${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="s-name">${s.name}</div>
+              <div class="s-meta">${s.admno} · ${s.fp?'<span style="color:var(--secondary);font-weight:600;">Fingerprint enrolled</span>':'<span style="color:var(--error);">No fingerprint</span>'}</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              ${statusChip}
+              ${!inTime?`<button class="btn btn-success btn-sm" onclick="manualMark(${s.id},'in')">
+                <span class="material-symbols-outlined" style="font-size:14px;">login</span>In</button>`:''}
+              ${inTime&&!outTime?`<button class="btn btn-secondary btn-sm" onclick="manualMark(${s.id},'out')">
+                <span class="material-symbols-outlined" style="font-size:14px;">logout</span>Out</button>`:''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `);
+}
+
+function manualMark(studentId, type) {
+  const key = `${TODAY_STR}-${STATE.selectedClass}-${STATE.selectedSubject}-${studentId}`;
+  if (!STATE.scans[key]) STATE.scans[key] = {};
+  const now = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  STATE.scans[key][type] = now;
+  const student = STATE.students.find(s=>s.id===studentId);
+  if (student) {
+    STATE.recentScans.unshift({ name:student.name, initials:student.name.split(' ').map(n=>n[0]).join('').slice(0,2), class:student.class, subject:STATE.selectedSubject, type, time:now });
+    sendScanWebhook(student, type, now);
+  }
+  renderBiometric();
+  showToast(`${type==='in'?'Checked in':'Checked out'}: ${student?.name}`);
+}
+
+function markAllManual(type) {
+  STATE.students.filter(s=>s.class===STATE.selectedClass).forEach(s=>{
+    const key = `${TODAY_STR}-${STATE.selectedClass}-${STATE.selectedSubject}-${s.id}`;
+    if (!STATE.scans[key]) STATE.scans[key] = {};
+    const now = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    STATE.scans[key][type] = now;
+  });
+  renderBiometric();
+  showToast(`All students marked ${type==='in'?'in':'out'}`);
+}
+
+function exportAttendanceCSV() {
+  const classStudents = STATE.students.filter(s=>s.class===STATE.selectedClass);
+  const rows = [['Name','Adm No','Class','Subject','Date','Check In','Check Out','Status']];
+  classStudents.forEach(s => {
+    const key = `${TODAY_STR}-${STATE.selectedClass}-${STATE.selectedSubject}-${s.id}`;
+    const rec = STATE.scans[key] || {};
+    rows.push([s.name, s.admno, s.class, STATE.selectedSubject, TODAY_STR, rec.in||'—', rec.out||'—', rec.in?'Present':'Absent']);
+  });
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`educall-${STATE.selectedClass}-${STATE.selectedSubject}-${TODAY_STR}.csv`; a.click();
+  showToast('CSV exported');
+}
+
+// ══════════════════════════════════════════════════════════
+//  STUDENTS
+// ══════════════════════════════════════════════════════════
+function renderStudents() {
+  setHeader('Students', `${STATE.students.length} enrolled · SS1–SS3`,
+    `<div style="display:flex;gap:8px;">
+      <div style="position:relative;">
+        <span class="material-symbols-outlined" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--outline);">search</span>
+        <input style="padding:8px 14px 8px 32px;border-radius:8px;border:none;background:var(--surface-container-low);font-size:13px;outline:none;min-width:200px;" placeholder="Search students…" oninput="filterStudents(this.value)">
+      </div>
+      <select class="form-select" style="width:auto;padding:8px 28px 8px 12px;" onchange="filterByClass(this.value)">
+        <option value="">All Classes</option>
+        ${CLASSES.map(c=>`<option>${c}</option>`).join('')}
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="openAddStudent()">
+        <span class="material-symbols-outlined" style="font-size:16px;">person_add</span> Add Student
+      </button>
+    </div>`);
+
+  const notEnrolled = STATE.students.filter(s=>!s.fp).length;
+  setContent(`
+    ${notEnrolled>0?`<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--error-container);border-radius:10px;margin-bottom:16px;">
+      <span class="material-symbols-outlined" style="color:var(--error);">warning</span>
+      <div style="font-size:13px;color:#690005;font-weight:600;">${notEnrolled} student${notEnrolled>1?'s':''} without fingerprint enrollment</div>
+      <button class="btn btn-sm" style="background:var(--error);color:white;margin-left:auto;" onclick="showToast('Connect fingerprint device to enroll','error')">Enroll Now</button>
+    </div>`:''}
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Student</th><th>Adm. No.</th><th>Class</th><th>Gender</th><th>Parent</th><th>Fingerprint</th><th>Actions</th></tr></thead>
+          <tbody id="s-tbody">${renderStudentRows(STATE.students)}</tbody>
+        </table>
+      </div>
+    </div>
+  `);
+}
+
+function renderStudentRows(list) {
+  if (!list.length) return `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--outline);">No students found</td></tr>`;
+  return list.map((s,i)=>`<tr>
+    <td style="color:var(--outline);font-size:11px;font-family:monospace;">${i+1}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="s-avatar" style="background:${s.fp?'var(--surface-container-high)':'var(--error-container)'};color:${s.fp?'var(--on-surface-variant)':'var(--error)'};">
+          ${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
+        </div>
+        <div style="font-weight:600;">${s.name}</div>
+      </div>
+    </td>
+    <td style="font-family:monospace;font-size:12px;color:var(--outline);">${s.admno}</td>
+    <td><span class="status-chip chip-blue">${s.class}</span></td>
+    <td style="text-transform:capitalize;">${s.gender}</td>
+    <td>${s.parent}<br><span style="font-size:11px;color:var(--outline);">${s.phone}</span></td>
+    <td>${s.fp
+      ? `<span class="status-chip chip-in"><span class="material-symbols-outlined" style="font-size:12px;">fingerprint</span>Enrolled</span>`
+      : `<span class="status-chip chip-absent"><span class="material-symbols-outlined" style="font-size:12px;">fingerprint_off</span>Not enrolled</span>`}
+    </td>
+    <td>
+      <div style="display:flex;gap:4px;">
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="editStudent(${s.id})" title="Edit">
+          <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
+        </button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteStudent(${s.id})" title="Remove">
+          <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+        </button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function filterStudents(q) {
+  const f = STATE.students.filter(s=>s.name.toLowerCase().includes(q.toLowerCase())||s.admno.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById('s-tbody').innerHTML = renderStudentRows(f);
+}
+function filterByClass(cls) {
+  const f = cls ? STATE.students.filter(s=>s.class===cls) : STATE.students;
+  document.getElementById('s-tbody').innerHTML = renderStudentRows(f);
+}
+function openAddStudent() {
+  STATE.editingStudent = null;
+  document.getElementById('sm-title').textContent = 'Add Student';
+  ['sm-name','sm-admno','sm-parent','sm-phone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sm-fp-status').textContent = 'Not enrolled';
+  openModal('modal-student');
+}
+function editStudent(id) {
+  const s = STATE.students.find(s=>s.id===id);
+  if (!s) return;
+  STATE.editingStudent = id;
+  document.getElementById('sm-title').textContent = 'Edit Student';
+  document.getElementById('sm-name').value = s.name;
+  document.getElementById('sm-admno').value = s.admno;
+  document.getElementById('sm-gender').value = s.gender;
+  document.getElementById('sm-class').value = s.class;
+  document.getElementById('sm-parent').value = s.parent;
+  document.getElementById('sm-phone').value = s.phone;
+  document.getElementById('sm-fp-status').textContent = s.fp ? 'Enrolled ✓' : 'Not enrolled';
+  openModal('modal-student');
+}
+function simulateEnroll() {
+  document.getElementById('sm-fp-status').textContent = 'Enrolling… ✓ Done';
+}
+function saveStudent() {
+  const name = document.getElementById('sm-name').value.trim();
+  if (!name) { showToast('Enter student name','error'); return; }
+  const fp = document.getElementById('sm-fp-status').textContent.includes('Done') || document.getElementById('sm-fp-status').textContent.includes('✓');
+  const data = {
+    name, admno: document.getElementById('sm-admno').value.trim(),
+    gender: document.getElementById('sm-gender').value,
+    class: document.getElementById('sm-class').value,
+    parent: document.getElementById('sm-parent').value.trim(),
+    phone: document.getElementById('sm-phone').value.trim(),
+    fp,
+  };
+  if (STATE.editingStudent) {
+    const i = STATE.students.findIndex(s=>s.id===STATE.editingStudent);
+    STATE.students[i] = { ...STATE.students[i], ...data };
+    showToast('Student updated');
+  } else {
+    STATE.students.push({ id:STATE.nextId++, ...data });
+    showToast('Student added');
+  }
+  closeModal('modal-student');
+  renderStudents();
+}
+function deleteStudent(id) {
+  STATE.students = STATE.students.filter(s=>s.id!==id);
+  renderStudents();
+  showToast('Student removed');
+}
+
+// ══════════════════════════════════════════════════════════
+//  REPORTS
+// ══════════════════════════════════════════════════════════
+function renderReports() {
+  setHeader('Reports & Analytics', 'Biometric attendance data — SS1 to SS3',
+    `<button class="btn btn-secondary btn-sm" onclick="exportAttendanceCSV()">
+      <span class="material-symbols-outlined" style="font-size:15px;">download</span> Export
+    </button>`);
+
+  setContent(`
+    <div class="g2 mb-24">
+      <div class="card">
+        <div class="sh-title mb-16">Weekly Check-in Trend</div>
+        <div style="position:relative;height:220px;"><canvas id="trend-chart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="sh-title mb-16">Attendance by Subject</div>
+        <div style="position:relative;height:220px;"><canvas id="subject-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="g2 mb-24">
+      <div class="card">
+        <div class="sh-title mb-16">Fingerprint Enrollment Status</div>
+        ${CLASSES.map(cls=>{
+          const total = STATE.students.filter(s=>s.class===cls).length;
+          const enrolled = STATE.students.filter(s=>s.class===cls&&s.fp).length;
+          const pct = total>0?Math.round((enrolled/total)*100):0;
+          return `<div class="rbar-row">
+            <div class="rbar-label">${cls}</div>
+            <div class="rbar-wrap"><div class="rbar-fill" style="width:${pct}%;background:${pct>=90?'var(--secondary)':pct>=60?'#f59e0b':'var(--tertiary)'}"></div></div>
+            <div class="rbar-pct">${pct}%</div>
+            <span style="font-size:11px;color:var(--outline);width:60px;text-align:right;">${enrolled}/${total}</span>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="card">
+        <div class="sh-title mb-16">Per-Class Attendance Rate</div>
+        ${CLASSES.map(cls=>{
+          const rate = 70+Math.floor(Math.random()*28);
+          return `<div class="rbar-row">
+            <div class="rbar-label">${cls}</div>
+            <div class="rbar-wrap"><div class="rbar-fill" style="width:${rate}%;background:${rate>=85?'var(--secondary)':rate>=70?'#f59e0b':'var(--tertiary)'}"></div></div>
+            <div class="rbar-pct">${rate}%</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sh-title mb-16">Subject Attendance Log — ${STATE.selectedClass}</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Student</th><th>Subject</th><th>Date</th><th>Check In</th><th>Check Out</th><th>Duration</th><th>Status</th></tr></thead>
+        <tbody>
+          ${STATE.students.filter(s=>s.class===STATE.selectedClass).slice(0,8).map(s=>{
+            const subjects = ['Mathematics','English Language','Physics','Chemistry'];
+            return subjects.map(sub=>{
+              const inT = `0${7+Math.floor(Math.random()*3)}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}`;
+              const outT = `${10+Math.floor(Math.random()*4)}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}`;
+              const late = Math.random() > 0.8;
+              return `<tr>
+                <td style="font-weight:600;">${s.name}</td>
+                <td>${sub}</td>
+                <td style="font-size:12px;color:var(--outline);">${TODAY_STR}</td>
+                <td style="font-family:monospace;font-size:12px;">${inT}</td>
+                <td style="font-family:monospace;font-size:12px;">${outT}</td>
+                <td style="font-size:12px;">60 min</td>
+                <td><span class="status-chip ${late?'chip-late':'chip-in'}">${late?'Late':'Present'}</span></td>
+              </tr>`;
+            }).join('');
+          }).join('')}
+        </tbody>
+      </table></div>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    new Chart(document.getElementById('trend-chart'),{
+      type:'line',
+      data:{
+        labels:['Mon','Tue','Wed','Thu','Fri','Mon','Tue'],
+        datasets:[{label:'Check-ins',data:[88,92,85,79,91,87,93],borderColor:'#003461',backgroundColor:'rgba(0,52,97,0.06)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#003461'}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{y:{min:60,max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'#f0f4fd'}},x:{ticks:{font:{size:10}},grid:{display:false}}}}
+    });
+    new Chart(document.getElementById('subject-chart'),{
+      type:'bar',
+      data:{
+        labels:['Maths','English','Physics','Chemistry','Biology','Economics'],
+        datasets:[{data:[91,88,82,79,85,77],backgroundColor:'rgba(0,52,97,0.8)',borderRadius:6}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'#f0f4fd'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}
+    });
+  },100);
+}
+
+// ══════════════════════════════════════════════════════════
+//  ALERTS
+// ══════════════════════════════════════════════════════════
+function renderAlerts() {
+  setHeader('Parent Alerts', 'Automated via n8n — WhatsApp & SMS');
+  const sent=STATE.alerts.filter(a=>a.status==='sent').length;
+  const pending=STATE.alerts.filter(a=>a.status==='pending').length;
+  setContent(`
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+      ${[['Sent',sent,'chip-green','check_circle'],['Pending',pending,'chip-amber','schedule'],['Total',STATE.alerts.length,'chip-blue','notifications']].map(([l,v,c,i])=>`
+        <div class="stat-card">
+          <span class="stat-chip ${c}"><span class="material-symbols-outlined" style="font-size:12px;">${i}</span>${l}</span>
+          <div class="stat-number">${v}</div>
+          <div class="stat-label">${l} alerts</div>
+        </div>`).join('')}
+    </div>
+    <div class="card mt-24">
+      <div class="sh">
+        <div class="sh-title">All Parent Alerts</div>
+        <button class="btn btn-primary btn-sm" onclick="retryPending()">Retry Pending</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Student</th><th>Class</th><th>Subject</th><th>Type</th><th>Parent</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>${STATE.alerts.map(a=>`<tr>
+          <td style="font-weight:600;">${a.student}</td>
+          <td><span class="status-chip chip-blue">${a.class}</span></td>
+          <td>${a.subject}</td>
+          <td><span class="status-chip ${a.type==='absent'?'chip-absent':'chip-late'}">${a.type}</span></td>
+          <td>${a.parent}</td>
+          <td style="font-size:12px;color:var(--outline);">${a.date}</td>
+          <td><span class="status-chip ${a.status==='sent'?'chip-in':'chip-amber'}">${a.status}</span></td>
+        </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>
+  `);
+}
+function retryPending(){STATE.alerts.filter(a=>a.status==='pending').forEach(a=>a.status='sent');renderAlerts();showToast('Pending alerts retried via n8n');}
+
+// ══════════════════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════════════════
+function renderSettings() {
+  setHeader('Settings', 'School & system configuration');
+  setContent(`
+    <div class="g2">
+      <div>
+        <div class="card mb-20">
+          <div class="sh-title mb-16">School Details</div>
+          <div class="form-group"><label class="form-label">School Name</label><input class="form-input" value="Sunshine Secondary School, Lagos"></div>
+          <div class="form-group"><label class="form-label">School Email</label><input class="form-input" value="${STATE.user.email}" type="email"></div>
+          <div class="form-group"><label class="form-label">Timezone</label>
+            <select class="form-select"><option selected>Africa/Lagos (WAT UTC+1)</option></select></div>
+          <div class="form-group"><label class="form-label">Academic Year</label><input class="form-input" value="2024/2025"></div>
+          <div class="form-group"><label class="form-label">Classes Active</label>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+              ${CLASSES.map(c=>`<span class="status-chip chip-blue" style="cursor:pointer;">${c}</span>`).join('')}
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showToast('School details saved')">Save Details</button>
+        </div>
+        <div class="card">
+          <div class="sh-title mb-16">Biometric Device</div>
+          <div style="display:flex;gap:12px;align-items:center;padding:14px;background:var(--surface-container-low);border-radius:10px;margin-bottom:16px;">
+            <span class="material-symbols-outlined" style="font-size:32px;color:var(--outline);">fingerprint</span>
+            <div>
+              <div style="font-size:13px;font-weight:600;">Fingerprint Scanner</div>
+              <div style="font-size:12px;color:var(--outline);">Mantra MFS100 / Digital Persona</div>
+            </div>
+            <span class="status-chip chip-absent" style="margin-left:auto;">Not connected</span>
+          </div>
+          <div style="font-size:12px;color:var(--outline);margin-bottom:12px;">In production, connect your fingerprint SDK here. For now, use the kiosk simulation.</div>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Scanning for devices…')">Scan for Devices</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card mb-20">
+          <div class="sh-title mb-4">n8n Webhook Configuration</div>
+          <div style="font-size:12px;color:var(--outline);margin-bottom:16px;">Paste your n8n webhook URLs to activate parent alerts</div>
+          <div class="form-group">
+            <label class="form-label">Scan Webhook (check-in/out)</label>
+            <input class="form-input" id="cfg-scan" placeholder="https://your.n8n.cloud/webhook/scan" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.scan}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Absence Alert Webhook</label>
+            <input class="form-input" id="cfg-absent" placeholder="https://your.n8n.cloud/webhook/absent" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.absent}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Early Checkout Webhook</label>
+            <input class="form-input" id="cfg-early" placeholder="https://your.n8n.cloud/webhook/early-checkout" style="font-size:12px;font-family:monospace;" value="${STATE.webhooks.early}">
+          </div>
+          <div style="background:var(--surface-container-low);border-radius:10px;padding:14px;margin-bottom:16px;">
+            <div style="font-size:11px;font-weight:700;color:var(--on-surface-variant);margin-bottom:8px;">n8n receives this on each scan:</div>
+            <pre style="font-size:10px;color:var(--on-surface-variant);line-height:1.7;overflow-x:auto;">{
+  "event": "student_checked_in",
+  "student_name": "Adaeze Okonkwo",
+  "admno": "SCH/24/001",
+  "class": "SS2A",
+  "subject": "Mathematics",
+  "period": "Period 3",
+  "timestamp": "2025-03-21T09:34:12",
+  "type": "check_in",
+  "parent_phone": "+234 803 111 2222"
+}</pre>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary btn-sm flex-1" onclick="testWebhook()">Test</button>
+            <button class="btn btn-primary btn-sm flex-1" onclick="saveWebhooksCfg()">Save</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sh-title mb-16">Alert Rules</div>
+          ${[['Alert parent on absence',true],['Alert on early checkout',true],['Flag late check-in (>10min)',true],['Weekly report to admin',true],['Truancy after 3 absences',true]].map(([l,on])=>`
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--surface-container);">
+              <span style="font-size:13px;color:var(--on-surface);">${l}</span>
+              <div style="width:38px;height:22px;border-radius:11px;background:${on?'var(--primary)':'var(--surface-container-high)'};cursor:pointer;position:relative;" onclick="this.style.background=this.style.background.includes('003461')?'var(--surface-container-high)':'var(--primary)'">
+                <div style="width:18px;height:18px;border-radius:9px;background:white;position:absolute;top:2px;${on?'right:2px':'left:2px'};box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function saveWebhooksCfg() {
+  STATE.webhooks.scan = document.getElementById('cfg-scan').value.trim();
+  STATE.webhooks.absent = document.getElementById('cfg-absent').value.trim();
+  STATE.webhooks.early = document.getElementById('cfg-early').value.trim();
+  showToast('Webhook settings saved');
+}
+async function testWebhook() {
+  const url = STATE.webhooks.scan || document.getElementById('cfg-scan')?.value;
+  if (!url) { showToast('Enter a webhook URL first','error'); return; }
+  showToast('Sending test to n8n…');
+  try {
+    await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'test',message:'EduCall webhook test',timestamp:new Date().toISOString()})});
+    showToast('Test sent! Check your n8n workflow');
+  } catch(e) { showToast('Could not reach webhook','error'); }
+}
+function saveWebhooks() {
+  STATE.webhooks.scan = document.getElementById('wh-scan').value.trim();
+  STATE.webhooks.absent = document.getElementById('wh-absent').value.trim();
+  STATE.webhooks.early = document.getElementById('wh-early').value.trim();
+  closeModal('modal-webhook');
+  showToast('Webhooks saved');
+}
+
+// ══════════════════════════════════════════════════════════
+//  KIOSK
+// ══════════════════════════════════════════════════════════
+let kioskScanning = false;
+const SCAN_STUDENTS = ['Adaeze Okonkwo','Chukwuemeka Eze','Fatima Aliyu','Oluwafemi Adeleke','Chiamaka Osei','Ngozi Obi','Emeka Nwosu','Babatunde Adeyemi'];
+
+function setKioskMode(mode) {
+  STATE.kioskMode = mode;
+  document.getElementById('kiosk-title').textContent = mode==='in' ? 'Place Finger to Check In' : 'Place Finger to Check Out';
+  const inBtn = document.getElementById('mode-in-btn');
+  const outBtn = document.getElementById('mode-out-btn');
+  if (mode==='in') {
+    inBtn.style.background='rgba(255,255,255,0.2)'; inBtn.style.color='white';
+    outBtn.style.background='rgba(255,255,255,0.08)'; outBtn.style.color='rgba(255,255,255,0.5)';
+  } else {
+    outBtn.style.background='rgba(255,255,255,0.2)'; outBtn.style.color='white';
+    inBtn.style.background='rgba(255,255,255,0.08)'; inBtn.style.color='rgba(255,255,255,0.5)';
+  }
+}
+
+function updateKioskPeriod() {
+  document.getElementById('kiosk-period-badge').innerHTML =
+    `<span class="material-symbols-outlined" style="font-size:14px;">schedule</span> Period 3 · ${STATE.selectedSubject} · ${STATE.selectedClass}`;
+}
+
+function simulateScan() {
+  if (kioskScanning) return;
+  kioskScanning = true;
+  const fp = document.getElementById('fp-bg');
+  const icon = document.getElementById('fp-icon');
+  const status = document.getElementById('kiosk-status');
+  const hint = document.getElementById('kiosk-hint');
+  const result = document.getElementById('kiosk-result');
+
+  // Reset
+  fp.className = 'fp-bg scanning';
+  result.classList.remove('visible');
+  status.textContent = 'Scanning fingerprint…';
+  hint.textContent = 'Please hold still';
+
+  setTimeout(() => {
+    const success = Math.random() > 0.1;
+    if (success) {
+      fp.className = 'fp-bg success';
+      const student = STATE.students[Math.floor(Math.random()*STATE.students.length)];
+      const now = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      const type = STATE.kioskMode;
+
+      // Record scan
+      const key = `${TODAY_STR}-${STATE.selectedClass}-${STATE.selectedSubject}-${student.id}`;
+      if (!STATE.scans[key]) STATE.scans[key] = {};
+      STATE.scans[key][type] = now;
+
+      STATE.recentScans.unshift({
+        name:student.name, initials:student.name.split(' ').map(n=>n[0]).join('').slice(0,2),
+        class:student.class, subject:STATE.selectedSubject, type, time:now
+      });
+
+      // Update result card
+      document.getElementById('kr-avatar').textContent = student.name.split(' ').map(n=>n[0]).join('').slice(0,2);
+      document.getElementById('kr-name').textContent = student.name;
+      document.getElementById('kr-meta').textContent = `${student.class} · ${STATE.selectedSubject}`;
+      document.getElementById('kr-time').textContent = now;
+      document.getElementById('kr-type').textContent = type==='in' ? 'Checked In' : 'Checked Out';
+      result.classList.add('visible');
+
+      status.textContent = type==='in' ? `✓ Welcome, ${student.name.split(' ')[0]}!` : `✓ Goodbye, ${student.name.split(' ')[0]}!`;
+      hint.textContent = type==='in' ? 'Check-in recorded successfully' : 'Check-out recorded successfully';
+
+      // Add to recent list
+      updateRecentList();
+
+      // Fire n8n webhook
+      sendScanWebhook(student, type, now);
+
+    } else {
+      fp.className = 'fp-bg error-state';
+      status.textContent = 'Fingerprint not recognised';
+      hint.textContent = 'Please try again or see your teacher';
+    }
+
+    setTimeout(() => {
+      fp.className = 'fp-bg';
+      status.textContent = 'Ready to scan';
+      hint.textContent = 'Tap the fingerprint icon to simulate a scan';
+      kioskScanning = false;
+    }, 2500);
+  }, 1800);
+}
+
+function updateRecentList() {
+  const list = document.getElementById('recent-list');
+  if (!list) return;
+  list.innerHTML = STATE.recentScans.slice(0,5).map(s=>`
+    <div class="recent-item">
+      <div style="width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);flex-shrink:0;">${s.initials}</div>
+      <div class="recent-name">${s.name}</div>
+      <span class="recent-type ${s.type}">${s.type==='in'?'IN':'OUT'}</span>
+      <span class="recent-time">${s.time}</span>
+    </div>`).join('');
+}
+
+async function sendScanWebhook(student, type, time) {
+  if (!STATE.webhooks.scan) return;
+  try {
+    await fetch(STATE.webhooks.scan, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        event: type==='in'?'student_checked_in':'student_checked_out',
+        student_name: student.name, admno: student.admno,
+        class: student.class, subject: STATE.selectedSubject,
+        period: `Period ${STATE.selectedPeriod}`, timestamp: new Date().toISOString(),
+        type: type==='in'?'check_in':'check_out', parent_phone: student.phone
+      })
+    });
+  } catch(e) {}
+}
+
+function startKioskClock() {
+  function tick() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    const dateStr = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+    const el = document.getElementById('kiosk-clock');
+    const del = document.getElementById('kiosk-date');
+    if (el) el.textContent = timeStr;
+    if (del) del.textContent = dateStr;
+  }
+  tick();
+  setInterval(tick, 1000);
+  updateKioskPeriod();
+  updateRecentList();
+}
+
+// ══════════════════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.style.display='none'; });
+  const el = document.getElementById(id);
+  el.style.display = id==='pg-kiosk'?'flex':'block';
+  if (id==='pg-app') { el.style.display='block'; el.querySelector('.shell').style.display='flex'; }
+  if (id==='pg-login') el.style.display='flex';
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">${type==='error'?'error':'check_circle'}</span> ${msg}`;
+  t.className = `toast ${type}`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.add('hidden'), 3500);
+}
+
+document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// Live clock for dashboard
+setInterval(()=>{ const el=document.getElementById('live-clock'); if(el) el.textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }, 1000);
+
+// Init login page default role
+document.addEventListener('DOMContentLoaded', () => pickRole('admin'));
+</script>
+</body>
+</html>
