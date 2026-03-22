@@ -547,6 +547,202 @@ tr:hover td { background: var(--surface-container); }
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE: SCHOOL REGISTRATION
+═══════════════════════════════════════════════════════════ -->
+<div id="pg-register" class="page" style="background:var(--surface);align-items:center;justify-content:center;min-height:100vh;display:none;">
+  <div style="width:100%;max-width:520px;padding:24px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="width:52px;height:52px;border-radius:16px;background:var(--sig-grad);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div style="font-family:var(--font-headline);font-size:26px;font-weight:800;color:var(--primary);letter-spacing:-0.02em;">Register Your School</div>
+      <div style="font-size:13px;color:var(--outline);margin-top:4px;">Get EduCall running in minutes — free to start</div>
+    </div>
+
+    <!-- Progress steps -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:28px;" id="reg-steps">
+      <div class="reg-step active" id="step-dot-1" style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">1</div>
+      <div style="height:2px;width:48px;background:var(--surface-container-high);" id="step-line-1"></div>
+      <div class="reg-step" id="step-dot-2" style="width:28px;height:28px;border-radius:50%;background:var(--surface-container-high);color:var(--outline);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">2</div>
+      <div style="height:2px;width:48px;background:var(--surface-container-high);" id="step-line-2"></div>
+      <div class="reg-step" id="step-dot-3" style="width:28px;height:28px;border-radius:50%;background:var(--surface-container-high);color:var(--outline);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">3</div>
+    </div>
+
+    <!-- Step 1: School Details -->
+    <div id="reg-step-1" class="card" style="animation:slideUp 0.3s ease-out;">
+      <div style="font-family:var(--font-headline);font-size:17px;font-weight:700;color:var(--on-surface);margin-bottom:4px;">School Details</div>
+      <div style="font-size:12px;color:var(--outline);margin-bottom:20px;">Tell us about your school</div>
+      <div class="form-group">
+        <label class="form-label">School Name</label>
+        <input class="form-input" id="reg-school-name" placeholder="e.g. Sunshine Secondary School">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">Country</label>
+          <select class="form-select" id="reg-country" onchange="updateCurrency()">
+            <option value="Nigeria">Nigeria</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Ghana">Ghana</option>
+            <option value="Kenya">Kenya</option>
+            <option value="South Africa">South Africa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City</label>
+          <input class="form-input" id="reg-city" placeholder="e.g. Lagos">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">School Address</label>
+        <input class="form-input" id="reg-address" placeholder="Street address">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label class="form-label">School Phone</label>
+          <input class="form-input" id="reg-phone" placeholder="+234 800 000 0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">School Type</label>
+          <select class="form-select" id="reg-type">
+            <option>Private Secondary</option>
+            <option>Government Secondary</option>
+            <option>International School</option>
+            <option>Faith-based School</option>
+            <option>Independent (UK)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;">
+        <button class="btn btn-secondary btn-sm" onclick="showPage('pg-login')">← Back to login</button>
+        <button class="btn btn-primary" onclick="regNext(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Admin Account -->
+    <div id="reg-step-2" style="display:none;">
+      <div class="card" style="animation:slideUp 0.3s ease-out;">
+        <div style="font-family:var(--font-headline);font-size:17px;font-weight:700;color:var(--on-surface);margin-bottom:4px;">Admin Account</div>
+        <div style="font-size:12px;color:var(--outline);margin-bottom:20px;">Create your administrator login</div>
+        <div class="form-group">
+          <label class="form-label">Your Full Name</label>
+          <input class="form-input" id="reg-name" placeholder="e.g. Mrs Adaeze Okonkwo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="reg-email" placeholder="admin@yourschool.edu.ng">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" id="reg-pass" placeholder="Min 8 characters">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input class="form-input" type="password" id="reg-pass2" placeholder="Repeat password">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Role</label>
+          <select class="form-select" id="reg-role">
+            <option value="admin">School Administrator / Principal</option>
+            <option value="proprietor">School Proprietor / Owner</option>
+            <option value="bursar">Bursar / Business Manager</option>
+          </select>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="regPrev(2)">← Back</button>
+          <button class="btn btn-primary" onclick="regNext(2)">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Classes Setup -->
+    <div id="reg-step-3" style="display:none;">
+      <div class="card" style="animation:slideUp 0.3s ease-out;">
+        <div style="font-family:var(--font-headline);font-size:17px;font-weight:700;color:var(--on-surface);margin-bottom:4px;">Class Configuration</div>
+        <div style="font-size:12px;color:var(--outline);margin-bottom:20px;">Select the classes your school runs</div>
+        <div style="margin-bottom:14px;">
+          <div class="form-label">Senior Secondary (SS1–SS3)</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;" id="ss-classes">
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS1A" checked style="accent-color:var(--primary);"> SS1A</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS1B" style="accent-color:var(--primary);"> SS1B</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS1C" style="accent-color:var(--primary);"> SS1C</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS2A" checked style="accent-color:var(--primary);"> SS2A</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS2B" style="accent-color:var(--primary);"> SS2B</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS2C" style="accent-color:var(--primary);"> SS2C</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS3A" checked style="accent-color:var(--primary);"> SS3A</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS3B" style="accent-color:var(--primary);"> SS3B</label>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:600;">
+              <input type="checkbox" value="SS3C" style="accent-color:var(--primary);"> SS3C</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Academic Year</label>
+          <select class="form-select" id="reg-year">
+            <option>2025/2026</option>
+            <option>2026/2027</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">School Start Time</label>
+          <select class="form-select" id="reg-starttime">
+            <option value="07:30">7:30 AM</option>
+            <option value="08:00">8:00 AM</option>
+            <option value="08:30">8:30 AM</option>
+            <option value="08:40" selected>8:40 AM</option>
+            <option value="09:00">9:00 AM</option>
+          </select>
+        </div>
+        <div style="background:var(--surface-container-low);border-radius:10px;padding:14px;margin-bottom:16px;">
+          <div style="font-size:12px;font-weight:600;color:var(--on-surface-variant);margin-bottom:6px;">Your school will be registered as:</div>
+          <div style="font-family:var(--font-headline);font-size:15px;font-weight:700;color:var(--primary);" id="reg-preview-name">—</div>
+          <div style="font-size:12px;color:var(--outline);margin-top:2px;" id="reg-preview-id">School ID: —</div>
+          <div style="font-size:12px;color:var(--outline);" id="reg-preview-country">Country: —</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="regPrev(3)">← Back</button>
+          <button class="btn btn-primary" onclick="completeRegistration()" id="reg-submit-btn">
+            <span class="material-symbols-outlined" style="font-size:16px;">school</span>
+            Register School
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Success -->
+    <div id="reg-step-4" style="display:none;">
+      <div class="card" style="text-align:center;animation:slideUp 0.3s ease-out;">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--secondary-container);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <span class="material-symbols-outlined" style="font-size:32px;color:var(--secondary);">check_circle</span>
+        </div>
+        <div style="font-family:var(--font-headline);font-size:20px;font-weight:800;color:var(--on-surface);margin-bottom:6px;">School Registered!</div>
+        <div style="font-size:13px;color:var(--outline);margin-bottom:20px;" id="reg-success-msg">Your EduCall account is ready.</div>
+        <div style="background:var(--surface-container-low);border-radius:10px;padding:14px;margin-bottom:20px;text-align:left;">
+          <div style="font-size:11px;font-weight:700;color:var(--outline);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Your School Details</div>
+          <div id="reg-success-details" style="font-size:13px;color:var(--on-surface);line-height:1.8;"></div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="loginAfterRegister()" style="height:44px;font-size:14px;">
+          Enter EduCall Dashboard →
+        </button>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--outline);">
+      Already registered? <span style="color:var(--surface-tint);font-weight:600;cursor:pointer;" onclick="showPage('pg-login')">Sign in here</span>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════════════════════════════════════════════
      PAGE 2: BIOMETRIC KIOSK (tablet at classroom door)
 ═══════════════════════════════════════════════════════════ -->
@@ -913,13 +1109,57 @@ function pickRole(role) {
   el.querySelector('div:last-child').style.color = 'white';
 }
 
-function doLogin() {
-  const email = document.getElementById('l-email').value || 'demo@school.ng';
-  const name = email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const password = document.getElementById('l-pass').value.trim();
+
+  if (!email) { showLoginError('Please enter your email address'); return; }
+
+  // Check localStorage for registered schools
+  let matchedSchool = null;
+  try {
+    const schools = JSON.parse(localStorage.getItem('educall_schools') || '[]');
+    matchedSchool = schools.find(s => s.email === email && s.password === password);
+  } catch(e) {}
+
+  // Demo fallback — any email/pass works for demo mode
+  if (!matchedSchool) {
+    const name = email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    matchedSchool = {
+      name: 'Admin User',
+      email,
+      schoolName: 'Sunshine Secondary School',
+      schoolId: 'sunshine-secondary-lagos',
+      country: 'Nigeria',
+      city: 'Lagos',
+      classes: ['SS1A','SS1B','SS2A','SS2B','SS3A','SS3B'],
+      academicYear: '2025/2026',
+      role: STATE.role || 'admin',
+      isDemo: true
+    };
+  }
+
+  // Set user state from school record
   STATE.user = {
-    name, email, school: 'Sunshine Secondary School, Lagos',
-    initials: name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()
+    name: matchedSchool.name,
+    email: matchedSchool.email,
+    school: matchedSchool.schoolName + (matchedSchool.city ? ', ' + matchedSchool.city : ''),
+    schoolId: matchedSchool.schoolId,
+    country: matchedSchool.country || 'Nigeria',
+    role: matchedSchool.role || STATE.role || 'admin',
+    initials: matchedSchool.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),
+    isDemo: matchedSchool.isDemo || false,
   };
+
+  // Update classes from school registration
+  if (matchedSchool.classes && matchedSchool.classes.length > 0) {
+    STATE.classes = matchedSchool.classes;
+  }
+
+  // Save to webhooks if school has their own config
+  if (matchedSchool.webhooks) {
+    STATE.webhooks = { ...STATE.webhooks, ...matchedSchool.webhooks };
+  }
 
   if (STATE.role === 'kiosk') {
     showPage('pg-kiosk');
@@ -928,6 +1168,18 @@ function doLogin() {
     showPage('pg-app');
     initApp();
   }
+}
+
+function showLoginError(msg) {
+  let el = document.getElementById('login-error');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'login-error';
+    el.style.cssText = 'padding:10px 14px;background:var(--error-container);color:var(--on-tertiary-container);border-radius:8px;font-size:12px;margin-top:10px;';
+    document.querySelector('#pg-login .card').appendChild(el);
+  }
+  el.textContent = msg;
+  setTimeout(() => { if(el) el.textContent=''; }, 4000);
 }
 
 function doLogout() { showPage('pg-login'); }
@@ -955,7 +1207,20 @@ const NAV_TEACHER = [
 function initApp() {
   document.getElementById('sb-name').textContent = STATE.user.name;
   document.getElementById('sb-role').textContent = STATE.role;
-  document.getElementById('sb-school').textContent = STATE.user.school.split(',')[0];
+  // Show demo badge if in demo mode
+  if (STATE.user.isDemo) {
+    const footer = document.querySelector('.sidebar-footer');
+    if (footer && !document.getElementById('demo-badge')) {
+      const badge = document.createElement('div');
+      badge.id = 'demo-badge';
+      badge.style.cssText = 'background:rgba(239,159,39,0.15);color:#854F0B;font-size:10px;font-weight:700;text-align:center;padding:6px;border-radius:8px;margin:0 8px 8px;';
+      badge.textContent = '⚡ DEMO MODE — Register to save data';
+      badge.onclick = () => showPage('pg-register');
+      badge.style.cursor = 'pointer';
+      footer.insertBefore(badge, footer.firstChild);
+    }
+  }
+  document.getElementById('sb-school').textContent = (STATE.user.school || 'Your School').split(',')[0];
   document.getElementById('sb-avatar').textContent = STATE.user.initials;
   renderNav();
   navTo('dashboard');
@@ -1944,7 +2209,7 @@ async function dbLoadAll() {
 
   const data = await dbCall('dbLoad', {
     action: 'load_all',
-    school_id: STATE.user.school
+    school_id: STATE.user.schoolId || STATE.user.school
   });
 
   if (!data) {
@@ -1993,7 +2258,7 @@ async function dbLoadAll() {
 async function dbSaveStudent(student) {
   const result = await dbCall('dbSaveStudent', {
     action: student.id ? 'update' : 'insert',
-    school_id: STATE.user.school,
+    school_id: STATE.user.schoolId || STATE.user.school,
     student: {
       id: student.id,
       full_name: student.name,
@@ -2032,7 +2297,7 @@ async function dbSaveAttendance(studentId, type, time) {
 async function dbGetReports(filters = {}) {
   return await dbCall('dbGetReports', {
     action: 'get_reports',
-    school_id: STATE.user.school,
+    school_id: STATE.user.schoolId || STATE.user.school,
     filters: {
       date_from: filters.dateFrom || new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0],
       date_to: filters.dateTo || TODAY_STR,
@@ -2056,6 +2321,197 @@ function renderDbStatus() {
   if (reason === 'loading') return `<span class="status-chip chip-late"><span class="material-symbols-outlined" style="font-size:12px;">sync</span>Connecting...</span>`;
   if (reason === 'no-webhook') return `<span class="status-chip chip-absent"><span class="material-symbols-outlined" style="font-size:12px;">database</span>Not configured</span>`;
   return `<span class="status-chip chip-absent" onclick="dbLoadAll()" style="cursor:pointer;"><span class="material-symbols-outlined" style="font-size:12px;">refresh</span>Reconnect DB</span>`;
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  SCHOOL REGISTRATION SYSTEM
+// ══════════════════════════════════════════════════════════
+
+const REG = { step: 1 };
+
+function regNext(step) {
+  // Validate current step
+  if (step === 1) {
+    const name = document.getElementById('reg-school-name').value.trim();
+    const city = document.getElementById('reg-city').value.trim();
+    if (!name) { alert('Please enter your school name'); return; }
+    if (!city) { alert('Please enter your city'); return; }
+    REG.schoolName = name;
+    REG.city = city;
+    REG.country = document.getElementById('reg-country').value;
+    REG.address = document.getElementById('reg-address').value.trim();
+    REG.phone = document.getElementById('reg-phone').value.trim();
+    REG.schoolType = document.getElementById('reg-type').value;
+  } else if (step === 2) {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    const pass2 = document.getElementById('reg-pass2').value;
+    if (!name) { alert('Please enter your name'); return; }
+    if (!email || !email.includes('@')) { alert('Please enter a valid email'); return; }
+    if (pass.length < 8) { alert('Password must be at least 8 characters'); return; }
+    if (pass !== pass2) { alert('Passwords do not match'); return; }
+    REG.adminName = name;
+    REG.email = email;
+    REG.password = pass;
+    REG.role = document.getElementById('reg-role').value;
+  }
+
+  // Update step UI
+  document.getElementById('reg-step-' + step).style.display = 'none';
+  const nextStep = step + 1;
+  document.getElementById('reg-step-' + nextStep).style.display = 'block';
+
+  // Update progress dots
+  document.getElementById('step-dot-' + step).style.background = 'var(--secondary)';
+  document.getElementById('step-dot-' + step).style.color = 'white';
+  if (document.getElementById('step-line-' + step)) {
+    document.getElementById('step-line-' + step).style.background = 'var(--secondary)';
+  }
+  document.getElementById('step-dot-' + nextStep).style.background = 'var(--primary)';
+  document.getElementById('step-dot-' + nextStep).style.color = 'white';
+
+  // Update preview on step 3
+  if (nextStep === 3) {
+    const schoolId = REG.schoolName.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .substring(0, 40) + '-' + Date.now().toString().slice(-4);
+    REG.schoolId = schoolId;
+    document.getElementById('reg-preview-name').textContent = REG.schoolName;
+    document.getElementById('reg-preview-id').textContent = 'School ID: ' + schoolId;
+    document.getElementById('reg-preview-country').textContent = 'Country: ' + REG.country + ' · ' + REG.city;
+  }
+  REG.step = nextStep;
+}
+
+function regPrev(step) {
+  document.getElementById('reg-step-' + step).style.display = 'none';
+  const prevStep = step - 1;
+  document.getElementById('reg-step-' + prevStep).style.display = 'block';
+  document.getElementById('step-dot-' + step).style.background = 'var(--surface-container-high)';
+  document.getElementById('step-dot-' + step).style.color = 'var(--outline)';
+  REG.step = prevStep;
+}
+
+function updateCurrency() {
+  // Could update pricing display based on country
+}
+
+async function completeRegistration() {
+  const btn = document.getElementById('reg-submit-btn');
+  btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">refresh</span> Registering...';
+  btn.disabled = true;
+
+  // Get selected classes
+  const checkboxes = document.querySelectorAll('#ss-classes input[type=checkbox]:checked');
+  REG.classes = Array.from(checkboxes).map(c => c.value);
+
+  if (REG.classes.length === 0) {
+    alert('Please select at least one class');
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">school</span> Register School';
+    return;
+  }
+
+  REG.academicYear = document.getElementById('reg-year').value;
+  REG.startTime = document.getElementById('reg-starttime').value;
+
+  // Create school record
+  const schoolRecord = {
+    schoolId: REG.schoolId,
+    schoolName: REG.schoolName,
+    name: REG.adminName,
+    email: REG.email,
+    password: REG.password,
+    role: REG.role,
+    country: REG.country,
+    city: REG.city,
+    address: REG.address,
+    phone: REG.phone,
+    schoolType: REG.schoolType,
+    classes: REG.classes,
+    academicYear: REG.academicYear,
+    startTime: REG.startTime,
+    registeredAt: new Date().toISOString(),
+    webhooks: {},
+  };
+
+  // Save to localStorage (in production this would POST to n8n → Neon)
+  try {
+    const schools = JSON.parse(localStorage.getItem('educall_schools') || '[]');
+    // Check if email already exists
+    const existing = schools.findIndex(s => s.email === REG.email);
+    if (existing >= 0) {
+      schools[existing] = schoolRecord;
+    } else {
+      schools.push(schoolRecord);
+    }
+    localStorage.setItem('educall_schools', JSON.stringify(schools));
+  } catch(e) {
+    console.error('Could not save school record:', e);
+  }
+
+  // Also try to register in Neon via n8n webhook if available
+  try {
+    const regWebhook = STATE.webhooks.dbSaveStudent || '';
+    if (regWebhook) {
+      await fetch(regWebhook.replace('db-student', 'db-register-school'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register_school', school: schoolRecord })
+      });
+    }
+  } catch(e) {}
+
+  // Show success
+  document.getElementById('reg-step-3').style.display = 'none';
+  document.getElementById('reg-step-4').style.display = 'block';
+  document.getElementById('step-dot-3').style.background = 'var(--secondary)';
+
+  document.getElementById('reg-success-msg').textContent =
+    REG.schoolName + ' has been registered on EduCall.';
+
+  document.getElementById('reg-success-details').innerHTML =
+    '<strong>School:</strong> ' + REG.schoolName + '<br>' +
+    '<strong>Admin:</strong> ' + REG.adminName + '<br>' +
+    '<strong>Email:</strong> ' + REG.email + '<br>' +
+    '<strong>School ID:</strong> <code style="background:var(--surface-container-high);padding:2px 6px;border-radius:4px;font-size:11px;">' + REG.schoolId + '</code><br>' +
+    '<strong>Classes:</strong> ' + REG.classes.join(', ') + '<br>' +
+    '<strong>Country:</strong> ' + REG.country;
+
+  // Store for immediate login
+  REG.ready = true;
+}
+
+function loginAfterRegister() {
+  // Auto-login with the registered school
+  const schools = JSON.parse(localStorage.getItem('educall_schools') || '[]');
+  const school = schools.find(s => s.email === REG.email);
+  if (!school) { showPage('pg-login'); return; }
+
+  STATE.user = {
+    name: school.name,
+    email: school.email,
+    school: school.schoolName + ', ' + school.city,
+    schoolId: school.schoolId,
+    country: school.country,
+    role: 'admin',
+    initials: school.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),
+    isDemo: false,
+  };
+  STATE.classes = school.classes;
+  showPage('pg-app');
+  initApp();
+  showToast('Welcome to EduCall, ' + school.schoolName + '!', 'success');
+}
+
+// Show all registered schools (for super admin / debugging)
+function listRegisteredSchools() {
+  try {
+    return JSON.parse(localStorage.getItem('educall_schools') || '[]');
+  } catch(e) { return []; }
 }
 
 document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
