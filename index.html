@@ -731,6 +731,10 @@ tr:hover td { background: var(--surface-container); }
           <div style="font-size:11px;font-weight:700;color:var(--outline);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Your School Details</div>
           <div id="reg-success-details" style="font-size:13px;color:var(--on-surface);line-height:1.8;"></div>
         </div>
+        <div style="background:var(--surface-container-low);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--outline);text-align:left;">
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;color:var(--primary);">lock</span>
+          Your school data is completely private. No other school can see your students, teachers, or attendance records.
+        </div>
         <button class="btn btn-primary btn-full" onclick="loginAfterRegister()" style="height:44px;font-size:14px;">
           Enter EduCall Dashboard →
         </button>
@@ -739,6 +743,120 @@ tr:hover td { background: var(--surface-container); }
 
     <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--outline);">
       Already registered? <span style="color:var(--surface-tint);font-weight:600;cursor:pointer;" onclick="showPage('pg-login')">Sign in here</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ TEACHER MODAL ══════════════════════════════════════ -->
+<div class="modal-bg" id="modal-teacher">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header">
+      <div class="modal-title" id="tm-title">Add Teacher</div>
+      <button class="modal-close" onclick="closeModal('modal-teacher')">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" id="tm-name" placeholder="e.g. Mr Adeyemi">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="tm-email" placeholder="teacher@school.ng">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input class="form-input" id="tm-phone" placeholder="+234 800 000 0000">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Subjects Taught</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;" id="tm-subjects-wrap">
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Mathematics" class="tm-subject-cb" style="accent-color:var(--primary);"> Mathematics</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="English Language" class="tm-subject-cb" style="accent-color:var(--primary);"> English Language</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Physics" class="tm-subject-cb" style="accent-color:var(--primary);"> Physics</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Chemistry" class="tm-subject-cb" style="accent-color:var(--primary);"> Chemistry</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Biology" class="tm-subject-cb" style="accent-color:var(--primary);"> Biology</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Economics" class="tm-subject-cb" style="accent-color:var(--primary);"> Economics</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Government" class="tm-subject-cb" style="accent-color:var(--primary);"> Government</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Literature" class="tm-subject-cb" style="accent-color:var(--primary);"> Literature</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Computer Science" class="tm-subject-cb" style="accent-color:var(--primary);"> Computer Science</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Further Mathematics" class="tm-subject-cb" style="accent-color:var(--primary);"> Further Mathematics</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Civic Education" class="tm-subject-cb" style="accent-color:var(--primary);"> Civic Education</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Agricultural Science" class="tm-subject-cb" style="accent-color:var(--primary);"> Agricultural Science</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="Geography" class="tm-subject-cb" style="accent-color:var(--primary);"> Geography</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="History" class="tm-subject-cb" style="accent-color:var(--primary);"> History</label>
+          </div>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Classes Assigned</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;" id="tm-classes-wrap">
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS1A" class="tm-class-cb" style="accent-color:var(--primary);"> SS1A</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS1B" class="tm-class-cb" style="accent-color:var(--primary);"> SS1B</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS1C" class="tm-class-cb" style="accent-color:var(--primary);"> SS1C</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS2A" class="tm-class-cb" style="accent-color:var(--primary);"> SS2A</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS2B" class="tm-class-cb" style="accent-color:var(--primary);"> SS2B</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS2C" class="tm-class-cb" style="accent-color:var(--primary);"> SS2C</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS3A" class="tm-class-cb" style="accent-color:var(--primary);"> SS3A</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS3B" class="tm-class-cb" style="accent-color:var(--primary);"> SS3B</label>
+<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:var(--surface-container-low);cursor:pointer;font-size:12px;font-weight:500;"><input type="checkbox" value="SS3C" class="tm-class-cb" style="accent-color:var(--primary);"> SS3C</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <select class="form-select" id="tm-role">
+            <option value="teacher">Class Teacher</option>
+            <option value="hod">Head of Department</option>
+            <option value="vp">Vice Principal</option>
+            <option value="principal">Principal</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Login Access</label>
+          <select class="form-select" id="tm-access">
+            <option value="yes">Give EduCall login</option>
+            <option value="no">No login (attendance only)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-teacher')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTeacher()">Save Teacher</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BIOMETRIC ENROLMENT MODAL ══════════════════════════ -->
+<div class="modal-bg" id="modal-enrol">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div class="modal-title">Biometric Enrolment</div>
+      <button class="modal-close" onclick="closeModal('modal-enrol')">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <div style="font-size:13px;color:var(--outline);margin-bottom:16px;" id="enrol-student-name">Select a student to enrol</div>
+      <div style="width:120px;height:120px;border-radius:50%;background:var(--surface-container-low);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:3px solid var(--outline);transition:all 0.3s;" id="enrol-fp-ring">
+        <span class="material-symbols-outlined" style="font-size:56px;color:var(--outline);" id="enrol-fp-icon">fingerprint</span>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:var(--on-surface);margin-bottom:4px;" id="enrol-status">Ready to scan</div>
+      <div style="font-size:12px;color:var(--outline);margin-bottom:20px;" id="enrol-hint">Ask student to place finger on scanner 3 times</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;">
+        <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--outline);" id="enrol-dot-1"></div>
+        <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--outline);" id="enrol-dot-2"></div>
+        <div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--outline);" id="enrol-dot-3"></div>
+      </div>
+      <button class="btn btn-primary" onclick="runEnrolmentScan()" id="enrol-scan-btn" style="width:100%;height:44px;font-size:14px;">
+        <span class="material-symbols-outlined" style="font-size:18px;">fingerprint</span>
+        Start Fingerprint Scan
+      </button>
+      <div style="margin-top:12px;font-size:11px;color:var(--outline);">
+        In production: connect Mantra MFS100 or Digital Persona scanner via USB
+      </div>
     </div>
   </div>
 </div>
@@ -918,7 +1036,51 @@ tr:hover td { background: var(--surface-container); }
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('modal-student')">Cancel</button>
+      <!-- SEN / Inclusive Education Section -->
+      <div style="border-top:1px solid var(--surface-container-high);margin-top:14px;padding-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--on-surface);">Special Educational Needs (SEN)</div>
+            <div style="font-size:11px;color:var(--outline);margin-top:2px;">Flag this student for inclusive education support and equipment alerts</div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span style="font-size:12px;color:var(--outline);" id="sm-sen-label">No</span>
+            <div style="width:38px;height:22px;border-radius:11px;background:var(--surface-container-high);cursor:pointer;position:relative;transition:background 0.2s;" id="sm-sen-toggle" onclick="toggleSEN()">
+              <div style="width:18px;height:18px;border-radius:9px;background:white;position:absolute;top:2px;left:2px;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);" id="sm-sen-knob"></div>
+            </div>
+          </label>
+        </div>
+        <div id="sm-sen-details" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">SEN Type</label>
+            <select class="form-select" id="sm-sen-type">
+              <option value="">Select type</option>
+              <option value="Autism Spectrum Disorder (ASD)">Autism Spectrum Disorder (ASD)</option>
+              <option value="ADHD / Attention Deficit Disorder">ADHD / Attention Deficit Disorder</option>
+              <option value="Dyslexia">Dyslexia</option>
+              <option value="Physical Disability">Physical Disability</option>
+              <option value="Speech and Language Needs">Speech and Language Needs</option>
+              <option value="Hearing Impairment">Hearing Impairment</option>
+              <option value="Visual Impairment">Visual Impairment</option>
+              <option value="Other">Other / Not specified</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Required Equipment</label>
+            <div style="font-size:11px;color:var(--outline);margin-bottom:6px;">Parent receives WhatsApp alert if child arrives without any of these items</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;" id="sm-equipment-list"></div>
+            <div style="display:flex;gap:8px;">
+              <input class="form-input" id="sm-equipment-input" placeholder="e.g. Hearing aid, Communication device" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addEquipmentItem();}">
+              <button class="btn btn-secondary btn-sm" onclick="addEquipmentItem()" type="button">Add</button>
+            </div>
+          </div>
+          <div style="background:var(--surface-container-low);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--outline);">
+            <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;color:var(--primary);">notifications_active</span>
+            When this student checks in, EduCall will automatically verify their equipment. If any item is missing, parent receives an instant WhatsApp alert.
+          </div>
+        </div>
+      </div>
+            <button class="btn btn-secondary" onclick="closeModal('modal-student')">Cancel</button>
       <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
     </div>
   </div>
@@ -1049,13 +1211,21 @@ const STATE = {
   dbConnected: false,
   dbLoading: false,
   editingStudent: null,
+  editingTeacher: null,
+  teachers: [
+    {id:1,name:'Mr Adeyemi',email:'adeyemi@school.ng',phone:'+234 809 111 2222',subjects:['Mathematics','Further Mathematics'],classes:['SS2A','SS3A'],role:'teacher',fp:false},
+    {id:2,name:'Mrs Okonkwo',email:'okonkwo@school.ng',phone:'+234 803 222 3333',subjects:['English Language','Literature'],classes:['SS2A','SS1C'],role:'teacher',fp:false},
+    {id:3,name:'Mr Nwosu',email:'nwosu@school.ng',phone:'+234 808 333 4444',subjects:['Physics','Computer Science'],classes:['SS1A','SS2C'],role:'teacher',fp:false},
+    {id:4,name:'Mrs Aliyu',email:'aliyu@school.ng',phone:'+234 807 444 5555',subjects:['Chemistry'],classes:['SS3A'],role:'teacher',fp:false},
+    {id:5,name:'Mr Bakare',email:'bakare@school.ng',phone:'+234 805 555 6666',subjects:['Biology'],classes:['SS2B'],role:'teacher',fp:false},
+  ],
   selectedClass: 'SS2A',
   selectedSubject: 'Mathematics',
   selectedPeriod: 3,
 
   students: [
-    {id:1,name:'Adaeze Okonkwo',admno:'SCH/24/001',gender:'female',class:'SS2A',parent:'Mrs Okonkwo',phone:'+234 803 111 2222',fp:true},
-    {id:2,name:'Chukwuemeka Eze',admno:'SCH/24/002',gender:'male',class:'SS2A',parent:'Mr Eze',phone:'+234 806 333 4444',fp:true},
+    {id:1,name:'Adaeze Okonkwo',admno:'SCH/24/001',gender:'female',class:'SS2A',parent:'Mrs Okonkwo',phone:'+234 803 111 2222',fp:true,sen:false,equipment:[]},
+    {id:2,name:'Chukwuemeka Eze',admno:'SCH/24/002',gender:'male',class:'SS2A',parent:'Mr Eze',phone:'+234 806 333 4444',fp:true,sen:false,equipment:[]},
     {id:3,name:'Fatima Aliyu',admno:'SCH/24/003',gender:'female',class:'SS1A',parent:'Alhaji Aliyu',phone:'+234 807 555 6666',fp:true},
     {id:4,name:'Babatunde Adeyemi',admno:'SCH/24/004',gender:'male',class:'SS2A',parent:'Mr Adeyemi',phone:'+234 809 777 8888',fp:false},
     {id:5,name:'Ngozi Obi',admno:'SCH/24/005',gender:'female',class:'SS3A',parent:'Mrs Obi',phone:'+234 802 999 0000',fp:true},
@@ -1192,6 +1362,8 @@ const NAV_ADMIN = [
   {id:'timetable',icon:'calendar_month',label:'Subject Timetable'},
   {id:'biometric',icon:'fingerprint',label:'Biometric Attendance'},
   {id:'students',icon:'groups',label:'Students',badge:()=>STATE.students.length},
+  {id:'teachers',icon:'school',label:'Teachers',badge:()=>STATE.teachers.length},
+  {id:'enrolment',icon:'fingerprint',label:'Biometric Enrolment'},
   {id:'reports',icon:'bar_chart',label:'Reports & Analytics'},
   {id:'alerts',icon:'notifications',label:'Parent Alerts',badge:()=>STATE.alerts.filter(a=>a.status==='pending').length||null},
   {id:'settings',icon:'settings',label:'Settings'},
@@ -1248,6 +1420,8 @@ function navTo(view) {
     timetable: renderTimetable,
     biometric: renderBiometric,
     students: renderStudents,
+    teachers: renderTeachers,
+    enrolment: renderEnrolment,
     reports: renderReports,
     alerts: renderAlerts,
     settings: renderSettings,
@@ -1284,6 +1458,13 @@ function renderDashboard() {
         <span class="stat-chip chip-green"><span class="material-symbols-outlined" style="font-size:12px;">fingerprint</span> Biometric</span>
         <div class="stat-number">${STATE.students.filter(s=>s.fp).length}</div>
         <div class="stat-label">Fingerprints enrolled</div>
+      </div>
+      <div class="stat-card" onclick="navigateTo('students')" style="cursor:pointer;">
+        <div class="stat-icon" style="background:rgba(245,158,11,0.1);">
+          <span class="material-symbols-outlined" style="color:#B45309;">accessibility</span>
+        </div>
+        <div class="stat-number">${STATE.students.filter(s=>s.sen).length}</div>
+        <div class="stat-label">SEN students</div>
       </div>
       <div class="stat-card">
         <span class="stat-chip chip-outline"><span class="material-symbols-outlined" style="font-size:12px;">calendar_month</span> Periods</span>
@@ -1661,7 +1842,10 @@ function renderStudentRows(list) {
       </div>
     </td>
     <td style="font-family:monospace;font-size:12px;color:var(--outline);">${s.admno}</td>
-    <td><span class="status-chip chip-blue">${s.class}</span></td>
+    <td>
+      <span class="status-chip chip-blue">${s.class}</span>
+      ${s.sen ? '<span class="status-chip chip-late" style="font-size:10px;margin-left:3px;" title="' + (s.senType||'SEN') + '">SEN</span>' : ''}
+    </td>
     <td style="text-transform:capitalize;">${s.gender}</td>
     <td>${s.parent}<br><span style="font-size:11px;color:var(--outline);">${s.phone}</span></td>
     <td>${s.fp
@@ -1673,6 +1857,7 @@ function renderStudentRows(list) {
         <button class="btn btn-secondary btn-sm btn-icon" onclick="editStudent(${s.id})" title="Edit">
           <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
         </button>
+        ${s.sen ? `<button class="btn btn-sm btn-icon" style="background:rgba(245,158,11,0.15);color:#92400e;" onclick="openSENModal(${s.id})" title="SEN Profile"><span class="material-symbols-outlined" style="font-size:15px;">accessibility</span></button>` : ''}
         <button class="btn btn-danger btn-sm btn-icon" onclick="deleteStudent(${s.id})" title="Remove">
           <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
         </button>
@@ -1691,9 +1876,20 @@ function filterByClass(cls) {
 }
 function openAddStudent() {
   STATE.editingStudent = null;
+  senEnabled = false;
+  senEquipment = [];
   document.getElementById('sm-title').textContent = 'Add Student';
   ['sm-name','sm-admno','sm-parent','sm-phone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('sm-fp-status').textContent = 'Not enrolled';
+  // Reset SEN toggle
+  const toggle = document.getElementById('sm-sen-toggle');
+  const knob   = document.getElementById('sm-sen-knob');
+  const label  = document.getElementById('sm-sen-label');
+  const details = document.getElementById('sm-sen-details');
+  if(toggle) toggle.style.background = 'var(--surface-container-high)';
+  if(knob)   knob.style.left = '2px';
+  if(label)  label.textContent = 'No';
+  if(details) details.style.display = 'none';
   openModal('modal-student');
 }
 function editStudent(id) {
@@ -1717,6 +1913,7 @@ function saveStudent() {
   const name = document.getElementById('sm-name').value.trim();
   if (!name) { showToast('Enter student name','error'); return; }
   const fp = document.getElementById('sm-fp-status').textContent.includes('Done') || document.getElementById('sm-fp-status').textContent.includes('✓');
+  const senTypeEl = document.getElementById('sm-sen-type');
   const data = {
     name, admno: document.getElementById('sm-admno').value.trim(),
     gender: document.getElementById('sm-gender').value,
@@ -1724,6 +1921,9 @@ function saveStudent() {
     parent: document.getElementById('sm-parent').value.trim(),
     phone: document.getElementById('sm-phone').value.trim(),
     fp,
+    sen: senEnabled,
+    senType: senTypeEl ? senTypeEl.value : '',
+    equipment: [...senEquipment],
   };
   if (STATE.editingStudent) {
     const i = STATE.students.findIndex(s=>s.id===STATE.editingStudent);
@@ -1845,7 +2045,12 @@ function renderReports() {
 //  ALERTS
 // ══════════════════════════════════════════════════════════
 function renderAlerts() {
-  setHeader('Parent Alerts', 'Automated via n8n — WhatsApp & SMS');
+  const senCount = STATE.students.filter(s=>s.sen).length;
+  setHeader('Parent Alerts', 'Automated via n8n — WhatsApp & SMS',
+    senCount > 0 ? `<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(245,158,11,0.12);border-radius:8px;font-size:12px;font-weight:600;color:#92400e;">
+      <span class="material-symbols-outlined" style="font-size:14px;">accessibility</span>
+      ${senCount} SEN student${senCount>1?'s':''} — equipment alerts active
+    </div>` : '');
   const sent=STATE.alerts.filter(a=>a.status==='sent').length;
   const pending=STATE.alerts.filter(a=>a.status==='pending').length;
   setContent(`
@@ -2000,7 +2205,7 @@ function saveWebhooksCfg() {
   STATE.webhooks.dbGetReports = document.getElementById('cfg-dbreports').value.trim();
   // Persist to localStorage so settings survive page refresh
   try {
-    localStorage.setItem('educall_webhooks', JSON.stringify(STATE.webhooks));
+    localStorage.setItem('educall_webhooks_' + (STATE.user.schoolId || 'demo'), JSON.stringify(STATE.webhooks));
   } catch(e) {}
   showToast('Webhook settings saved');
   // Auto-connect to DB if load webhook is set
@@ -2514,6 +2719,416 @@ function listRegisteredSchools() {
   } catch(e) { return []; }
 }
 
+
+// ══════════════════════════════════════════════════════════
+//  TEACHER MANAGEMENT
+// ══════════════════════════════════════════════════════════
+
+function renderTeachers() {
+  setHeader('Teachers', `${STATE.teachers.length} registered · ${STATE.user.school.split(',')[0]}`,
+    `<button class="btn btn-primary btn-sm" onclick="openAddTeacher()">
+      <span class="material-symbols-outlined" style="font-size:16px;">person_add</span> Add Teacher
+    </button>`);
+
+  setContent(`
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Teacher</th><th>Contact</th><th>Subjects</th><th>Classes</th><th>Role</th><th>Access</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${STATE.teachers.map((t,i) => `<tr>
+              <td style="color:var(--outline);font-size:11px;">${i+1}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div class="s-avatar" style="background:var(--surface-container-high);color:var(--on-surface-variant);">
+                    ${t.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                  </div>
+                  <div style="font-weight:600;font-size:13px;">${t.name}</div>
+                </div>
+              </td>
+              <td style="font-size:12px;">
+                ${t.email}<br>
+                <span style="color:var(--outline);">${t.phone}</span>
+              </td>
+              <td style="font-size:12px;max-width:160px;">
+                ${(t.subjects||[]).map(s=>`<span class="status-chip chip-blue" style="margin:1px;">${s}</span>`).join('')}
+              </td>
+              <td style="font-size:12px;">
+                ${(t.classes||[]).map(c=>`<span class="status-chip chip-in" style="margin:1px;">${c}</span>`).join('')}
+              </td>
+              <td><span class="status-chip chip-late" style="text-transform:capitalize;">${t.role||'teacher'}</span></td>
+              <td>
+                <span class="status-chip ${t.access==='no'?'chip-absent':'chip-in'}" style="font-size:10px;">
+                  ${t.access==='no'?'No login':'Has login'}
+                </span>
+              </td>
+              <td>
+                <div style="display:flex;gap:4px;">
+                  <button class="btn btn-secondary btn-sm btn-icon" onclick="editTeacher(${t.id})" title="Edit">
+                    <span class="material-symbols-outlined" style="font-size:15px;">edit</span>
+                  </button>
+                  <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTeacher(${t.id})" title="Remove">
+                    <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `);
+}
+
+function openAddTeacher() {
+  STATE.editingTeacher = null;
+  document.getElementById('tm-title').textContent = 'Add Teacher';
+  document.getElementById('tm-name').value = '';
+  document.getElementById('tm-email').value = '';
+  document.getElementById('tm-phone').value = '';
+  document.querySelectorAll('.tm-subject-cb').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.tm-class-cb').forEach(cb => cb.checked = false);
+  openModal('modal-teacher');
+}
+
+function editTeacher(id) {
+  const t = STATE.teachers.find(t => t.id === id);
+  if (!t) return;
+  STATE.editingTeacher = id;
+  document.getElementById('tm-title').textContent = 'Edit Teacher';
+  document.getElementById('tm-name').value = t.name;
+  document.getElementById('tm-email').value = t.email || '';
+  document.getElementById('tm-phone').value = t.phone || '';
+  document.getElementById('tm-role').value = t.role || 'teacher';
+  document.getElementById('tm-access').value = t.access || 'yes';
+  document.querySelectorAll('.tm-subject-cb').forEach(cb => {
+    cb.checked = (t.subjects || []).includes(cb.value);
+  });
+  document.querySelectorAll('.tm-class-cb').forEach(cb => {
+    cb.checked = (t.classes || []).includes(cb.value);
+  });
+  openModal('modal-teacher');
+}
+
+function saveTeacher() {
+  const name = document.getElementById('tm-name').value.trim();
+  if (!name) { showToast('Enter teacher name', 'error'); return; }
+  const subjects = Array.from(document.querySelectorAll('.tm-subject-cb:checked')).map(cb => cb.value);
+  const classes  = Array.from(document.querySelectorAll('.tm-class-cb:checked')).map(cb => cb.value);
+  const data = {
+    name,
+    email:    document.getElementById('tm-email').value.trim(),
+    phone:    document.getElementById('tm-phone').value.trim(),
+    role:     document.getElementById('tm-role').value,
+    access:   document.getElementById('tm-access').value,
+    subjects, classes,
+    school_id: STATE.user.schoolId,
+  };
+  if (STATE.editingTeacher) {
+    const i = STATE.teachers.findIndex(t => t.id === STATE.editingTeacher);
+    STATE.teachers[i] = { ...STATE.teachers[i], ...data };
+    showToast('Teacher updated');
+  } else {
+    const newT = { id: Date.now(), fp: false, ...data };
+    STATE.teachers.push(newT);
+    showToast('Teacher added');
+  }
+  closeModal('modal-teacher');
+  renderTeachers();
+}
+
+function deleteTeacher(id) {
+  if (!confirm('Remove this teacher?')) return;
+  STATE.teachers = STATE.teachers.filter(t => t.id !== id);
+  renderTeachers();
+  showToast('Teacher removed');
+}
+
+// ══════════════════════════════════════════════════════════
+//  BIOMETRIC ENROLMENT PAGE
+// ══════════════════════════════════════════════════════════
+
+let enrolScanCount = 0;
+let enrolCurrentStudent = null;
+
+function renderEnrolment() {
+  const notEnrolled = STATE.students.filter(s => !s.fp);
+  const enrolled    = STATE.students.filter(s => s.fp);
+
+  setHeader('Biometric Enrolment',
+    `${enrolled.length} enrolled · ${notEnrolled.length} pending`,
+    `<div style="display:flex;gap:8px;align-items:center;">
+      <select class="form-select" style="width:auto;font-size:12px;" onchange="filterEnrolClass(this.value)" id="enrol-class-filter">
+        <option value="">All Classes</option>
+        ${STATE.classes.map(c=>`<option>${c}</option>`).join('')}
+      </select>
+      <button class="btn btn-secondary btn-sm" onclick="renderEnrolment()">
+        <span class="material-symbols-outlined" style="font-size:16px;">refresh</span> Refresh
+      </button>
+    </div>`);
+
+  setContent(`
+    ${notEnrolled.length > 0 ? `
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--error-container);border-radius:10px;margin-bottom:16px;">
+      <span class="material-symbols-outlined" style="color:var(--error);font-size:20px;">warning</span>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#690005;">${notEnrolled.length} student${notEnrolled.length>1?'s':''} not yet enrolled</div>
+        <div style="font-size:11px;color:#690005;margin-top:2px;">These students cannot use the biometric kiosk until their fingerprint is registered</div>
+      </div>
+    </div>` : `
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--secondary-container);border-radius:10px;margin-bottom:16px;">
+      <span class="material-symbols-outlined" style="color:var(--secondary);">check_circle</span>
+      <div style="font-size:13px;font-weight:700;color:var(--on-secondary-container);">All students enrolled ✓</div>
+    </div>`}
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <!-- NOT ENROLLED -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:14px 16px;background:var(--error-container);border-bottom:1px solid rgba(0,0,0,0.06);">
+          <div style="font-size:13px;font-weight:700;color:#690005;">
+            <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle;">fingerprint_off</span>
+            Pending Enrolment (${notEnrolled.length})
+          </div>
+        </div>
+        <div style="max-height:400px;overflow-y:auto;">
+          ${notEnrolled.length === 0
+            ? `<div style="padding:24px;text-align:center;color:var(--outline);font-size:13px;">All students enrolled</div>`
+            : notEnrolled.map(s => `
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--surface-container-low);">
+                <div class="s-avatar" style="background:var(--error-container);color:var(--error);flex-shrink:0;">
+                  ${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:13px;font-weight:600;color:var(--on-surface);">${s.name}</div>
+                  <div style="font-size:11px;color:var(--outline);">${s.admno} · ${s.class}</div>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="startEnrolment(${s.id})" style="flex-shrink:0;font-size:11px;">
+                  <span class="material-symbols-outlined" style="font-size:14px;">fingerprint</span>
+                  Enrol
+                </button>
+              </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- ENROLLED -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:14px 16px;background:var(--secondary-container);border-bottom:1px solid rgba(0,0,0,0.06);">
+          <div style="font-size:13px;font-weight:700;color:var(--on-secondary-container);">
+            <span class="material-symbols-outlined" style="font-size:15px;vertical-align:middle;">fingerprint</span>
+            Enrolled (${enrolled.length})
+          </div>
+        </div>
+        <div style="max-height:400px;overflow-y:auto;">
+          ${enrolled.length === 0
+            ? `<div style="padding:24px;text-align:center;color:var(--outline);font-size:13px;">No students enrolled yet</div>`
+            : enrolled.map(s => `
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--surface-container-low);">
+                <div class="s-avatar" style="background:var(--surface-container-high);color:var(--on-surface-variant);flex-shrink:0;">
+                  ${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:13px;font-weight:600;color:var(--on-surface);">${s.name}</div>
+                  <div style="font-size:11px;color:var(--outline);">${s.admno} · ${s.class}</div>
+                </div>
+                <span class="status-chip chip-in" style="font-size:10px;flex-shrink:0;">
+                  <span class="material-symbols-outlined" style="font-size:11px;">check</span> Enrolled
+                </span>
+              </div>`).join('')}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HOW TO ENROL INSTRUCTIONS -->
+    <div class="card" style="margin-top:16px;background:var(--surface-container-low);">
+      <div style="font-size:13px;font-weight:700;color:var(--on-surface);margin-bottom:10px;">
+        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;">info</span>
+        How to Enrol Students
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+        ${[
+          ['1','Connect Device','Plug the Mantra MFS100 or Digital Persona USB fingerprint scanner into the admin laptop'],
+          ['2','Select Student','Click "Enrol" next to the student name in the Pending list'],
+          ['3','Scan 3 Times','Ask the student to place their finger on the scanner 3 times for accuracy'],
+          ['4','Confirm','Green tick appears — student is now active on all classroom kiosks'],
+        ].map(([n,t,d]) => `
+          <div style="text-align:center;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:white;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">${n}</div>
+            <div style="font-size:12px;font-weight:700;color:var(--on-surface);margin-bottom:3px;">${t}</div>
+            <div style="font-size:11px;color:var(--outline);line-height:1.4;">${d}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  `);
+}
+
+function filterEnrolClass(cls) {
+  // Re-render with class filter applied
+  const notEnrolled = STATE.students.filter(s => !s.fp && (!cls || s.class === cls));
+  const enrolled    = STATE.students.filter(s =>  s.fp && (!cls || s.class === cls));
+  // Simple re-render — just call renderEnrolment for now
+  renderEnrolment();
+}
+
+function startEnrolment(studentId) {
+  const s = STATE.students.find(s => s.id === studentId);
+  if (!s) return;
+  enrolCurrentStudent = studentId;
+  enrolScanCount = 0;
+  // Reset modal
+  document.getElementById('enrol-student-name').textContent = `Enrolling: ${s.name} — ${s.class}`;
+  document.getElementById('enrol-status').textContent = 'Ready to scan';
+  document.getElementById('enrol-hint').textContent = 'Ask student to place finger on scanner 3 times';
+  document.getElementById('enrol-fp-ring').style.border = '3px solid var(--outline)';
+  document.getElementById('enrol-fp-icon').style.color = 'var(--outline)';
+  document.getElementById('enrol-scan-btn').textContent = '';
+  document.getElementById('enrol-scan-btn').innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">fingerprint</span> Start Fingerprint Scan';
+  document.getElementById('enrol-scan-btn').disabled = false;
+  ['enrol-dot-1','enrol-dot-2','enrol-dot-3'].forEach(id => {
+    document.getElementById(id).style.background = 'transparent';
+    document.getElementById(id).style.borderColor = 'var(--outline)';
+  });
+  openModal('modal-enrol');
+}
+
+function runEnrolmentScan() {
+  if (enrolScanCount >= 3) return;
+  const btn = document.getElementById('enrol-scan-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;animation:spin 1s linear infinite;">refresh</span> Scanning…';
+  document.getElementById('enrol-fp-ring').style.border = '3px solid var(--primary)';
+  document.getElementById('enrol-fp-icon').style.color = 'var(--primary)';
+  document.getElementById('enrol-status').textContent = 'Scanning…';
+
+  setTimeout(() => {
+    enrolScanCount++;
+    const dotId = 'enrol-dot-' + enrolScanCount;
+    document.getElementById(dotId).style.background = 'var(--secondary)';
+    document.getElementById(dotId).style.borderColor = 'var(--secondary)';
+
+    if (enrolScanCount < 3) {
+      document.getElementById('enrol-status').textContent = `Scan ${enrolScanCount} of 3 — good!`;
+      document.getElementById('enrol-hint').textContent = `${3 - enrolScanCount} more scan${3-enrolScanCount>1?'s':''} needed`;
+      document.getElementById('enrol-fp-ring').style.border = '3px solid var(--outline)';
+      document.getElementById('enrol-fp-icon').style.color = 'var(--outline)';
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">fingerprint</span> Scan Again';
+    } else {
+      // All 3 scans done — enrolment complete
+      document.getElementById('enrol-status').textContent = 'Enrolment Complete ✓';
+      document.getElementById('enrol-hint').textContent = 'Fingerprint registered successfully';
+      document.getElementById('enrol-fp-ring').style.border = '3px solid var(--secondary)';
+      document.getElementById('enrol-fp-icon').style.color = 'var(--secondary)';
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">check_circle</span> Done — Close';
+      btn.disabled = false;
+      btn.onclick = () => {
+        // Mark student as enrolled
+        const idx = STATE.students.findIndex(s => s.id === enrolCurrentStudent);
+        if (idx >= 0) {
+          STATE.students[idx].fp = true;
+          dbSaveStudent(STATE.students[idx]);
+        }
+        closeModal('modal-enrol');
+        renderEnrolment();
+        showToast('Fingerprint enrolled successfully');
+        btn.onclick = runEnrolmentScan;
+      };
+    }
+  }, 1400);
+}
+
+// ══════════════════════════════════════════════════════════
+//  SCHOOL DATA ISOLATION — filter all data by school_id
+// ══════════════════════════════════════════════════════════
+
+function getSchoolId() {
+  return STATE.user.schoolId || 'sunshine-secondary-lagos';
+}
+
+// Override initApp to enforce school isolation
+const _originalInitApp = initApp;
+
+
+// ══════════════════════════════════════════════════════════
+//  SEN / INCLUSIVE EDUCATION
+// ══════════════════════════════════════════════════════════
+
+let senEnabled = false;
+let senEquipment = [];
+
+function toggleSEN() {
+  senEnabled = !senEnabled;
+  const toggle = document.getElementById('sm-sen-toggle');
+  const knob   = document.getElementById('sm-sen-knob');
+  const label  = document.getElementById('sm-sen-label');
+  const details = document.getElementById('sm-sen-details');
+  toggle.style.background = senEnabled ? 'var(--primary)' : 'var(--surface-container-high)';
+  knob.style.left   = senEnabled ? '18px' : '2px';
+  label.textContent = senEnabled ? 'Yes' : 'No';
+  details.style.display = senEnabled ? 'block' : 'none';
+}
+
+function addEquipmentItem() {
+  const input = document.getElementById('sm-equipment-input');
+  const val = input.value.trim();
+  if (!val) return;
+  if (!senEquipment.includes(val)) {
+    senEquipment.push(val);
+    renderEquipmentTags();
+  }
+  input.value = '';
+}
+
+function removeEquipmentItem(item) {
+  senEquipment = senEquipment.filter(e => e !== item);
+  renderEquipmentTags();
+}
+
+function renderEquipmentTags() {
+  const container = document.getElementById('sm-equipment-list');
+  if (!container) return;
+  container.innerHTML = senEquipment.map(item => `
+    <div style="display:flex;align-items:center;gap:4px;padding:4px 10px;background:var(--primary);color:white;border-radius:20px;font-size:11px;font-weight:600;">
+      ${item}
+      <span onclick="removeEquipmentItem('${item}')" style="cursor:pointer;font-size:14px;line-height:1;opacity:0.7;margin-left:2px;">×</span>
+    </div>`).join('');
+}
+
+function openSENModal(studentId) {
+  const s = STATE.students.find(s => s.id === studentId);
+  if (!s) return;
+  STATE.editingStudent = studentId;
+  document.getElementById('sm-title').textContent = 'Edit Student — SEN Profile';
+  document.getElementById('sm-name').value = s.name;
+  document.getElementById('sm-admno').value = s.admno;
+  document.getElementById('sm-gender').value = s.gender;
+  document.getElementById('sm-class').value = s.class;
+  document.getElementById('sm-parent').value = s.parent;
+  document.getElementById('sm-phone').value = s.phone;
+  document.getElementById('sm-fp-status').textContent = s.fp ? 'Enrolled ✓' : 'Not enrolled';
+  // SEN state
+  senEnabled = s.sen || false;
+  senEquipment = [...(s.equipment || [])];
+  const toggle = document.getElementById('sm-sen-toggle');
+  const knob   = document.getElementById('sm-sen-knob');
+  const label  = document.getElementById('sm-sen-label');
+  const details = document.getElementById('sm-sen-details');
+  if (toggle) toggle.style.background = senEnabled ? 'var(--primary)' : 'var(--surface-container-high)';
+  if (knob)   knob.style.left = senEnabled ? '18px' : '2px';
+  if (label)  label.textContent = senEnabled ? 'Yes' : 'No';
+  if (details) details.style.display = senEnabled ? 'block' : 'none';
+  if (document.getElementById('sm-sen-type') && s.senType) {
+    document.getElementById('sm-sen-type').value = s.senType;
+  }
+  renderEquipmentTags();
+  openModal('modal-student');
+}
+
 document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
 
 // Live clock for dashboard
@@ -2524,7 +3139,9 @@ document.addEventListener('DOMContentLoaded', () => {
   pickRole('admin');
   // Restore saved webhook settings
   try {
-    const saved = localStorage.getItem('educall_webhooks');
+    // Restore saved webhook settings scoped to this school
+    const schoolKey = (STATE.user && STATE.user.schoolId) ? STATE.user.schoolId : 'demo';
+    const saved = localStorage.getItem('educall_webhooks_' + schoolKey) || localStorage.getItem('educall_webhooks');
     if (saved) { STATE.webhooks = { ...STATE.webhooks, ...JSON.parse(saved) }; }
   } catch(e) {}
 });
