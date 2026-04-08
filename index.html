@@ -1221,6 +1221,7 @@ const STATE = {
   ],
   selectedClass: 'SS2A',
   selectedSubject: 'Mathematics',
+  selectedPeriod: 'Period 1',
   selectedPeriod: 3,
 
   students: [
@@ -1256,8 +1257,10 @@ const STATE = {
   scans: {},
   recentScans: [],
   alerts: [
-    {id:1,student:'Babatunde Adeyemi',class:'SS2A',subject:'Mathematics',type:'absent',date:'2025-03-20',parent:'Mr Adeyemi',status:'sent'},
-    {id:2,student:'Ibrahim Hassan',class:'SS1C',subject:'English Language',type:'absent',date:'2025-03-20',parent:'Mr Hassan',status:'sent'},
+    {id:1,student:'Babatunde Adeyemi',class:'SS2A',subject:'Mathematics',type:'absent',date:'2026-03-20',parent:'Mr Adeyemi',status:'sent',sen:true,senType:'ASD'},
+    {id:2,student:'Ibrahim Hassan',class:'SS1C',subject:'English Language',type:'absent',date:'2026-03-20',parent:'Mr Hassan',status:'sent'},
+    {id:3,student:'Babatunde Adeyemi',class:'SS2A',subject:'Physics',type:'equipment',date:'2026-03-21',parent:'Mr Adeyemi',status:'sent',sen:true,senType:'ASD',missingEquipment:['Communication board']},
+    {id:4,student:'Ibrahim Hassan',class:'SS1C',subject:'Chemistry',type:'equipment',date:'2026-03-21',parent:'Mr Hassan',status:'sent',sen:true,senType:'Hearing Impairment',missingEquipment:['Hearing aid']},
     {id:3,student:'Adaeze Okonkwo',class:'SS2A',subject:'Physics',type:'late',date:'2025-03-21',parent:'Mrs Okonkwo',status:'pending'},
   ],
 };
@@ -1512,6 +1515,53 @@ function renderDashboard() {
       ${renderRecentScansMini()}
     </div>
   `);
+
+  // ── Append SEN panel below dashboard ──────────────────
+  const senStudents = STATE.students.filter(s => s.sen);
+  if (senStudents.length > 0) {
+    const equipAlerts = STATE.alerts.filter(a=>a.type==='equipment').length;
+    const panel = document.createElement('div');
+    panel.innerHTML = `
+      <div class="card" style="margin-top:16px;border-left:4px solid #7C3AED;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:14px;font-weight:700;color:var(--on-surface);display:flex;align-items:center;gap:8px;">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#7C3AED;">accessibility</span>
+            SEN / Inclusive Education — ${senStudents.length} student${senStudents.length>1?'s':''}
+            ${equipAlerts>0?`<span style="background:#FEE2E2;color:#7B241C;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;">${equipAlerts} equipment alert${equipAlerts>1?'s':''} today</span>`:''}
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="navigateTo('alerts')">View Alerts →</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;">
+          ${senStudents.map(s => {
+            const todayEquipAlert = STATE.alerts.find(a=>a.student===s.name&&a.type==='equipment'&&a.date===TODAY_STR);
+            const todayAbsent = STATE.alerts.find(a=>a.student===s.name&&a.type==='absent'&&a.date===TODAY_STR);
+            const todayLate = STATE.alerts.find(a=>a.student===s.name&&a.type==='late'&&a.date===TODAY_STR);
+            return `
+            <div style="padding:12px 14px;border-radius:10px;border:1px solid ${todayEquipAlert?'#FCA5A5':todayAbsent?'#FCA5A5':'#DDD6FE'};background:${todayEquipAlert||todayAbsent?'#FFF5F5':'white'};">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <div style="width:34px;height:34px;border-radius:9px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#5B21B6;flex-shrink:0;">${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:var(--on-surface);">${s.name}</div>
+                  <div style="font-size:10px;color:var(--outline);">${s.class} · ${s.senType||'SEN'}</div>
+                </div>
+              </div>
+              ${todayEquipAlert?`<div style="font-size:10px;background:#FEE2E2;color:#7B241C;padding:4px 8px;border-radius:6px;margin-bottom:6px;font-weight:600;">⚠ Missing: ${(todayEquipAlert.missingEquipment||[]).join(', ')}</div>`:''}
+              ${todayAbsent?`<div style="font-size:10px;background:#FEE2E2;color:#7B241C;padding:4px 8px;border-radius:6px;margin-bottom:6px;font-weight:600;">⚠ Absent from ${todayAbsent.subject}</div>`:''}
+              ${todayLate?`<div style="font-size:10px;background:#FEF3C7;color:#92400E;padding:4px 8px;border-radius:6px;margin-bottom:6px;font-weight:600;">⏰ Late arrival today</div>`:''}
+              ${!todayEquipAlert&&!todayAbsent&&!todayLate?`<div style="font-size:10px;color:#059669;font-weight:600;">✓ No alerts today</div>`:''}
+              ${s.equipment&&s.equipment.length>0?`<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">
+                ${s.equipment.map(e=>`<span style="font-size:9px;background:#EDE9FE;color:#5B21B6;padding:2px 7px;border-radius:10px;">${e}</span>`).join('')}
+              </div>`:''}
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:12px;padding:10px 12px;background:#F5F3FF;border-radius:8px;font-size:11px;color:#5B21B6;">
+          <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">notifications_active</span>
+          Parent receives an instant WhatsApp alert when a SEN student is absent, late, or arrives without required equipment.
+        </div>
+      </div>`;
+    document.getElementById('app-content').appendChild(panel.firstElementChild);
+  }
 }
 
 function renderTodaySessions() {
@@ -1843,8 +1893,11 @@ function renderStudentRows(list) {
     </td>
     <td style="font-family:monospace;font-size:12px;color:var(--outline);">${s.admno}</td>
     <td>
-      <span class="status-chip chip-blue">${s.class}</span>
-      ${s.sen ? '<span class="status-chip chip-late" style="font-size:10px;margin-left:3px;" title="' + (s.senType||'SEN') + '">SEN</span>' : ''}
+      <div style="display:flex;flex-wrap:wrap;gap:3px;align-items:center;">
+        <span class="status-chip chip-blue">${s.class}</span>
+        ${s.sen ? `<span style="background:#EDE9FE;color:#5B21B6;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;" title="${s.senType||'SEN'}">SEN</span>` : ''}
+        ${s.sen && s.equipment && s.equipment.length > 0 ? `<span style="background:#FEF3C7;color:#92400E;font-size:9px;padding:2px 7px;border-radius:10px;" title="${(s.equipment||[]).join(', ')}">${s.equipment.length} items</span>` : ''}
+      </div>
     </td>
     <td style="text-transform:capitalize;">${s.gender}</td>
     <td>${s.parent}<br><span style="font-size:11px;color:var(--outline);">${s.phone}</span></td>
@@ -2046,42 +2099,162 @@ function renderReports() {
 // ══════════════════════════════════════════════════════════
 function renderAlerts() {
   const senCount = STATE.students.filter(s=>s.sen).length;
-  setHeader('Parent Alerts', 'Automated via n8n — WhatsApp & SMS',
-    senCount > 0 ? `<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(245,158,11,0.12);border-radius:8px;font-size:12px;font-weight:600;color:#92400e;">
-      <span class="material-symbols-outlined" style="font-size:14px;">accessibility</span>
-      ${senCount} SEN student${senCount>1?'s':''} — equipment alerts active
-    </div>` : '');
+  const equipAlerts = STATE.alerts.filter(a=>a.type==='equipment').length;
+  const lateAlerts = STATE.alerts.filter(a=>a.type==='late').length;
   const sent=STATE.alerts.filter(a=>a.status==='sent').length;
   const pending=STATE.alerts.filter(a=>a.status==='pending').length;
+
+  setHeader('Parent Alerts', 'Automated via n8n — WhatsApp & SMS',
+    `<div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${senCount>0?`<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(245,158,11,0.12);border-radius:8px;font-size:12px;font-weight:600;color:#92400e;">
+        <span class="material-symbols-outlined" style="font-size:14px;">accessibility</span>
+        ${senCount} SEN student${senCount>1?'s':''}</div>`:''}
+      ${equipAlerts>0?`<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(192,57,43,0.1);border-radius:8px;font-size:12px;font-weight:600;color:#7B241C;">
+        <span class="material-symbols-outlined" style="font-size:14px;">backpack</span>
+        ${equipAlerts} equipment alert${equipAlerts>1?'s':''}</div>`:''}
+    </div>`);
+
   setContent(`
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
-      ${[['Sent',sent,'chip-green','check_circle'],['Pending',pending,'chip-amber','schedule'],['Total',STATE.alerts.length,'chip-blue','notifications']].map(([l,v,c,i])=>`
+    <!-- STAT CARDS -->
+    <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+      ${[
+        ['Sent',sent,'chip-in','check_circle'],
+        ['Pending',pending,'chip-amber','schedule'],
+        ['Equipment',equipAlerts,'chip-late','backpack'],
+        ['Late',lateAlerts,'chip-absent','schedule'],
+      ].map(([l,v,c,i])=>`
         <div class="stat-card">
           <span class="stat-chip ${c}"><span class="material-symbols-outlined" style="font-size:12px;">${i}</span>${l}</span>
           <div class="stat-number">${v}</div>
           <div class="stat-label">${l} alerts</div>
         </div>`).join('')}
     </div>
-    <div class="card mt-24">
+
+    <!-- WHATSAPP PREVIEW PANEL -->
+    <div class="card" style="margin-bottom:20px;background:var(--surface-container-low);">
+      <div style="font-size:13px;font-weight:700;color:var(--on-surface);margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+        <span class="material-symbols-outlined" style="font-size:16px;color:#25D366;">chat</span>
+        What parents receive — WhatsApp message examples
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+
+        <!-- Absence -->
+        <div style="border-radius:12px;overflow:hidden;border:1px solid var(--surface-container-high);">
+          <div style="padding:8px 12px;background:#C0392B;display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:14px;color:white;">person_off</span>
+            <span style="font-size:11px;font-weight:700;color:white;">Absence Alert</span>
+          </div>
+          <div style="padding:10px 12px;background:#ECE5DD;">
+            <div style="background:white;border-radius:8px;padding:10px 12px;font-size:10.5px;color:#111;line-height:1.6;white-space:pre-line;box-shadow:0 1px 2px rgba(0,0,0,0.08);">Good afternoon Mrs Okonkwo,
+
+Your child <b>Adaeze Okonkwo</b> (SS2A) was not present for <b>Mathematics — Period 3</b> today.
+
+If there is a reason for this absence please contact the school on 0800-EDUCALL.
+
+<i>EduCall – Sunshine Secondary School</i></div>
+            <div style="text-align:right;margin-top:4px;font-size:9px;color:#667781;">✓✓ Delivered</div>
+          </div>
+        </div>
+
+        <!-- Late -->
+        <div style="border-radius:12px;overflow:hidden;border:1px solid var(--surface-container-high);">
+          <div style="padding:8px 12px;background:#B45309;display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:14px;color:white;">schedule</span>
+            <span style="font-size:11px;font-weight:700;color:white;">Late Arrival</span>
+          </div>
+          <div style="padding:10px 12px;background:#ECE5DD;">
+            <div style="background:white;border-radius:8px;padding:10px 12px;font-size:10.5px;color:#111;line-height:1.6;white-space:pre-line;box-shadow:0 1px 2px rgba(0,0,0,0.08);">Good morning Mr Adeleke,
+
+<b>Oluwafemi Adeleke</b> (SS2A) arrived for <b>Mathematics</b> at <b>09:18 AM</b> today — 28 minutes after class began.
+
+No action is required. This is for your information.
+
+<i>EduCall – Sunshine Secondary School</i></div>
+            <div style="text-align:right;margin-top:4px;font-size:9px;color:#667781;">✓✓ Delivered</div>
+          </div>
+        </div>
+
+        <!-- SEN Equipment -->
+        <div style="border-radius:12px;overflow:hidden;border:2px solid #FCA5A5;">
+          <div style="padding:8px 12px;background:#7C3AED;display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:14px;color:white;">accessibility</span>
+            <span style="font-size:11px;font-weight:700;color:white;">SEN Equipment Alert</span>
+          </div>
+          <div style="padding:10px 12px;background:#ECE5DD;">
+            <div style="background:white;border-radius:8px;padding:10px 12px;font-size:10.5px;color:#111;line-height:1.6;white-space:pre-line;box-shadow:0 1px 2px rgba(0,0,0,0.08);">Dear Mr Adeyemi,
+
+<b>Babatunde Adeyemi</b> (SS2A) arrived for class today without required SEN equipment:
+
+• Communication board
+
+Please arrange to bring this to school today if possible, as it supports your child's learning.
+
+<i>EduCall – Sunshine Secondary School</i></div>
+            <div style="text-align:right;margin-top:4px;font-size:9px;color:#667781;">✓✓ Delivered</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ALERTS TABLE -->
+    <div class="card">
       <div class="sh">
         <div class="sh-title">All Parent Alerts</div>
-        <button class="btn btn-primary btn-sm" onclick="retryPending()">Retry Pending</button>
+        <div style="display:flex;gap:8px;">
+          <select class="form-select" style="width:auto;font-size:12px;" onchange="filterAlerts(this.value)" id="alert-filter">
+            <option value="">All types</option>
+            <option value="absent">Absence</option>
+            <option value="late">Late</option>
+            <option value="equipment">Equipment (SEN)</option>
+            <option value="early">Early exit</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="retryPending()">Retry Pending</button>
+        </div>
       </div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Student</th><th>Class</th><th>Subject</th><th>Type</th><th>Parent</th><th>Date</th><th>Status</th></tr></thead>
-        <tbody>${STATE.alerts.map(a=>`<tr>
-          <td style="font-weight:600;">${a.student}</td>
-          <td><span class="status-chip chip-blue">${a.class}</span></td>
-          <td>${a.subject}</td>
-          <td><span class="status-chip ${a.type==='absent'?'chip-absent':'chip-late'}">${a.type}</span></td>
-          <td>${a.parent}</td>
-          <td style="font-size:12px;color:var(--outline);">${a.date}</td>
-          <td><span class="status-chip ${a.status==='sent'?'chip-in':'chip-amber'}">${a.status}</span></td>
-        </tr>`).join('')}
+        <thead><tr><th>Student</th><th>Class</th><th>Subject</th><th>Alert Type</th><th>Details</th><th>Parent</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="alerts-tbody">
+          ${renderAlertRows(STATE.alerts)}
         </tbody>
       </table></div>
     </div>
   `);
+}
+
+function renderAlertRows(alerts) {
+  if (!alerts.length) return `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--outline);">No alerts yet</td></tr>`;
+  return alerts.map(a => {
+    const typeChip = {
+      absent: `<span class="status-chip chip-absent"><span class="material-symbols-outlined" style="font-size:11px;">person_off</span>Absent</span>`,
+      late:   `<span class="status-chip chip-late"><span class="material-symbols-outlined" style="font-size:11px;">schedule</span>Late</span>`,
+      equipment: `<span class="status-chip" style="background:#EDE9FE;color:#5B21B6;"><span class="material-symbols-outlined" style="font-size:11px;">backpack</span>Equipment</span>`,
+      early:  `<span class="status-chip chip-amber"><span class="material-symbols-outlined" style="font-size:11px;">logout</span>Early exit</span>`,
+    }[a.type] || `<span class="status-chip chip-blue">${a.type}</span>`;
+
+    const details = a.type === 'equipment' && a.missingEquipment
+      ? `<span style="font-size:11px;color:#7C3AED;">Missing: ${a.missingEquipment.join(', ')}</span>`
+      : a.sen
+      ? `<span style="font-size:10px;background:#EDE9FE;color:#5B21B6;padding:2px 7px;border-radius:10px;font-weight:600;">${a.senType||'SEN'}</span>`
+      : `<span style="font-size:11px;color:var(--outline);">—</span>`;
+
+    return `<tr>
+      <td style="font-weight:600;">${a.student}${a.sen?'<span class="status-chip chip-late" style="font-size:9px;margin-left:4px;">SEN</span>':''}</td>
+      <td><span class="status-chip chip-blue">${a.class}</span></td>
+      <td style="font-size:12px;">${a.subject}</td>
+      <td>${typeChip}</td>
+      <td>${details}</td>
+      <td style="font-size:12px;">${a.parent}</td>
+      <td style="font-size:11px;color:var(--outline);">${a.date}</td>
+      <td><span class="status-chip ${a.status==='sent'?'chip-in':'chip-amber'}">${a.status}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterAlerts(type) {
+  const filtered = type ? STATE.alerts.filter(a=>a.type===type) : STATE.alerts;
+  const tbody = document.getElementById('alerts-tbody');
+  if (tbody) tbody.innerHTML = renderAlertRows(filtered);
 }
 function retryPending(){STATE.alerts.filter(a=>a.status==='pending').forEach(a=>a.status='sent');renderAlerts();showToast('Pending alerts retried via n8n');}
 
@@ -2299,6 +2472,23 @@ function simulateScan() {
 
       // Add to recent list
       updateRecentList();
+
+      // SEN equipment check on check-in
+      if (type === 'in' && student.sen && student.equipment && student.equipment.length > 0) {
+        checkSENEquipment(student, now);
+      }
+
+      // Late detection
+      const periodStartMap = {'Period 1':'08:40','Period 2':'09:40','Period 3':'10:40','Period 4':'11:40','Period 5':'12:40','Period 6':'13:40','Period 7':'14:40'};
+      const pStart = periodStartMap[STATE.selectedPeriod] || '08:40';
+      const [sH,sM] = pStart.split(':').map(Number);
+      const [cH,cM] = now.split(':').map(Number);
+      const isLate = type==='in' && ((cH*60+cM) - (sH*60+sM)) > 10;
+      if (isLate) {
+        const lateAlert = {id:Date.now(),student:student.name,class:student.class,subject:STATE.selectedSubject,type:'late',date:TODAY_STR,parent:student.parent,status:'sent',phone:student.phone};
+        STATE.alerts.unshift(lateAlert);
+        showToast(`Late alert sent to ${student.parent} via WhatsApp`,'warning');
+      }
 
       // Fire n8n webhook
       sendScanWebhook(student, type, now);
@@ -3127,6 +3317,135 @@ function openSENModal(studentId) {
   }
   renderEquipmentTags();
   openModal('modal-student');
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  SEN EQUIPMENT CHECK — fires on every SEN student check-in
+// ══════════════════════════════════════════════════════════
+
+function checkSENEquipment(student, time) {
+  // Show equipment checklist modal for teacher to confirm
+  showEquipmentCheck(student, time);
+}
+
+function showEquipmentCheck(student, time) {
+  // Create or reuse equipment check overlay
+  let overlay = document.getElementById('equip-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'equip-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    document.body.appendChild(overlay);
+  }
+
+  const items = student.equipment || [];
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:16px;padding:28px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;">
+          <span class="material-symbols-outlined" style="color:#B45309;font-size:22px;">accessibility</span>
+        </div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#002147;">SEN Equipment Check</div>
+          <div style="font-size:12px;color:#6B7280;">${student.name} · ${student.senType}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:16px;">Confirm which equipment the student has brought today. Parent will be alerted for any missing items.</div>
+      <div id="equip-list" style="margin-bottom:16px;">
+        ${items.map((item, i) => `
+          <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:#F9FAFB;margin-bottom:6px;cursor:pointer;border:2px solid #E5E7EB;" id="equip-row-${i}">
+            <input type="checkbox" id="equip-cb-${i}" checked onchange="updateEquipRow(${i})" style="width:18px;height:18px;accent-color:#0A7B54;cursor:pointer;">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#0A7B54;" id="equip-icon-${i}">check_circle</span>
+            <span style="font-size:13px;font-weight:500;color:#1A1A2E;">${item}</span>
+          </label>`).join('')}
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="confirmEquipment('${student.id}','${student.name}','${student.parent}','${student.phone}','${time}')" style="flex:1;padding:12px;border-radius:10px;background:#0A7B54;color:white;border:none;font-size:14px;font-weight:600;cursor:pointer;">
+          Confirm & Continue
+        </button>
+        <button onclick="document.getElementById('equip-overlay').style.display='none'" style="padding:12px 16px;border-radius:10px;background:#F3F4F6;color:#6B7280;border:none;font-size:14px;cursor:pointer;">
+          Skip
+        </button>
+      </div>
+    </div>`;
+  overlay.style.display = 'flex';
+}
+
+function updateEquipRow(i) {
+  const cb = document.getElementById(`equip-cb-${i}`);
+  const row = document.getElementById(`equip-row-${i}`);
+  const icon = document.getElementById(`equip-icon-${i}`);
+  if (cb.checked) {
+    row.style.borderColor = '#E5E7EB';
+    row.style.background = '#F9FAFB';
+    icon.textContent = 'check_circle';
+    icon.style.color = '#0A7B54';
+  } else {
+    row.style.borderColor = '#FCA5A5';
+    row.style.background = '#FFF5F5';
+    icon.textContent = 'cancel';
+    icon.style.color = '#C0392B';
+  }
+}
+
+function confirmEquipment(studentId, studentName, parentName, parentPhone, time) {
+  const student = STATE.students.find(s => s.id == studentId);
+  if (!student) { document.getElementById('equip-overlay').style.display = 'none'; return; }
+
+  const missing = [];
+  const items = student.equipment || [];
+  items.forEach((item, i) => {
+    const cb = document.getElementById(`equip-cb-${i}`);
+    if (cb && !cb.checked) missing.push(item);
+  });
+
+  if (missing.length > 0) {
+    // Add equipment alert to STATE
+    const alert = {
+      id: Date.now(),
+      student: studentName,
+      class: student.class,
+      subject: STATE.selectedSubject || 'Class',
+      type: 'equipment',
+      date: TODAY_STR,
+      parent: parentName,
+      phone: parentPhone,
+      status: 'sent',
+      sen: true,
+      senType: student.senType,
+      missingEquipment: missing,
+    };
+    STATE.alerts.unshift(alert);
+
+    // Fire equipment alert webhook to n8n
+    if (STATE.webhooks.scan) {
+      fetch(STATE.webhooks.scan, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'sen_equipment_missing',
+          student_name: studentName,
+          admno: student.admno,
+          class: student.class,
+          subject: STATE.selectedSubject,
+          sen_type: student.senType,
+          missing_equipment: missing,
+          parent_phone: parentPhone,
+          parent_name: parentName,
+          school_id: STATE.user.schoolId || 'demo',
+          timestamp: new Date().toISOString(),
+          type: 'equipment_alert',
+        })
+      }).catch(() => {});
+    }
+
+    showToast(`Equipment alert sent to ${parentName} — ${missing.join(', ')}`, 'error');
+  } else {
+    showToast(`All equipment confirmed for ${studentName}`);
+  }
+
+  document.getElementById('equip-overlay').style.display = 'none';
 }
 
 document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
